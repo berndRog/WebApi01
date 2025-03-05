@@ -26,7 +26,7 @@ public class Program {
       
       // Add services to the container.
       builder.Services.AddControllers();
-      builder.Services.AddScoped<IPersonRepository, PersonRepository>();
+      builder.Services.AddScoped<IPeopleRepository, PeopleRepository>();
       builder.Services.AddScoped<IDataContext, DataContext>();
       
       var app = builder.Build();

@@ -3,5 +3,5 @@ namespace WebApi.Core;
 
 public interface IDataContext {
    public ICollection<Person> People { get; }
-   public void SaveChanges();
+   public void SaveAllChanges();
 }

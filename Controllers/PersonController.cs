@@ -8,7 +8,7 @@ namespace WebApi.Controllers;
 //[Consumes("application/json")] default
 //[Produces("application/json")] default
 public class PersonController(
-   IPersonRepository personRepository,
+   IPeopleRepository peopleRepository,
    IDataContext dataContext
    //ILogger<PersonController> logger
 ) : ControllerBase {
@@ -17,7 +17,7 @@ public class PersonController(
    [HttpGet("people")]  
    [ProducesResponseType(StatusCodes.Status200OK)]
    public ActionResult<IEnumerable<Person>> GetAll() {
-      var people = personRepository.SelectAll();
+      var people = peopleRepository.SelectAll();
       return Ok(people);
    }
    
@@ -32,7 +32,7 @@ public class PersonController(
       //    case null:
       //       return NotFound("Owner with given Id not found");
       // };
-      return personRepository.FindById(id) switch {
+      return peopleRepository.FindById(id) switch {
          Person person => Ok(person),
          null => NotFound("Owner with given Id not found")
       };
@@ -49,7 +49,7 @@ public class PersonController(
       //    case null:
       //       return NotFound("Owner with given Id not found");
       // };
-      return personRepository.FindByName(name) switch {
+      return peopleRepository.FindByName(name) switch {
          Person person => Ok(person),
          null => NotFound("Owner with given name not found")
       };
@@ -60,7 +60,7 @@ public class PersonController(
    public ActionResult<Person> GetByEmail(
       [FromQuery] string email
    ) {
-      return personRepository.FindByEmail(email) switch {
+      return peopleRepository.FindByEmail(email) switch {
          Person person => Ok(person),
          null => NotFound("Owner with given EMail not found")
       };
@@ -72,8 +72,8 @@ public class PersonController(
    public ActionResult<Person> Create(
       [FromBody] Person person
    ) {
-      personRepository.Add(person);
-      dataContext.SaveChanges();
+      peopleRepository.Add(person);
+      dataContext.SaveAllChanges();
       return Created($"/people/{person.Id}", person);
    }
    
@@ -84,13 +84,13 @@ public class PersonController(
       Guid id,
       [FromBody] Person updatedPerson
    ) {
-      var person = personRepository.FindById(id);
+      var person = peopleRepository.FindById(id);
       if (person == null) {
          return NotFound();
       }
       person.Update(updatedPerson);
-      personRepository.Update(person);
-      dataContext.SaveChanges();
+      peopleRepository.Update(person);
+      dataContext.SaveAllChanges();
       return Ok(person);
    }
 
@@ -98,12 +98,12 @@ public class PersonController(
    [HttpDelete("people/{id}")]
    [ProducesResponseType(StatusCodes.Status204NoContent)]
    public IActionResult Delete(Guid id) {
-      var person = personRepository.FindById(id);
+      var person = peopleRepository.FindById(id);
       if (person == null) {
          return NotFound();
       }
-      personRepository.Remove(person);
-      dataContext.SaveChanges();
+      peopleRepository.Remove(person);
+      dataContext.SaveAllChanges();
       return NoContent();
    }
 }

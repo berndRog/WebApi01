@@ -69,7 +69,7 @@ internal class DataContext: IDataContext {
       };
    }
 
-   public void SaveChanges() {
+   public void SaveAllChanges() {
       try {
          var combinedCollections = new {
             People = People, 
