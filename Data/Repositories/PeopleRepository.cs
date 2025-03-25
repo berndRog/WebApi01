@@ -1,6 +1,6 @@
 using WebApi.Core;
 using WebApi.Core.DomainModel.Entities;
-namespace WebApi.Data.Persistence;
+namespace WebApi.Data.Repositories;
 
 public class PeopleRepository(
    IDataContext dataContext   
@@ -29,7 +29,7 @@ public class PeopleRepository(
       var person = dataContext.People.FirstOrDefault(person => 
          person.Id == updPerson.Id);
       if (person == null) return;
-      person.Update(updPerson);
+      person.Update(updPerson.FirstName, updPerson.LastName, updPerson.Email, updPerson.Phone);
    }
 
    public void Remove(Person person) =>

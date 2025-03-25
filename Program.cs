@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.HttpLogging;
 using WebApi.Core;
 using WebApi.Data;
-using WebApi.Data.Persistence;
+using WebApi.Data.Repositories;
 namespace WebApi;
 
 public class Program {
@@ -25,14 +25,25 @@ public class Program {
       // });
       
       // Add services to the container.
-      builder.Services.AddControllers();
+      builder.Services.AddControllers()
+         .AddJsonOptions(options => {
+            options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+//            options.JsonSerializerOptions.PropertyNamingPolicy = new LowerCaseNamingPolicy();
+            
+         });
+         
       builder.Services.AddSingleton<IPeopleRepository, PeopleRepository>();
       builder.Services.AddSingleton<IDataContext, DataContext>();
       
       var app = builder.Build();
 
       // Configure the HTTP request pipeline.
+      app.UseHttpLogging();
       app.MapControllers();
       app.Run();
    }
+}
+
+public class LowerCaseNamingPolicy : System.Text.Json.JsonNamingPolicy {
+   public override string ConvertName(string name) => name.ToLower();
 }

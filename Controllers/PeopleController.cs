@@ -74,6 +74,7 @@ public class PeopleController(
    ) {
       peopleRepository.Add(person);
       dataContext.SaveAllChanges();
+      
       return Created($"/people/{person.Id}", person);
    }
    
@@ -82,15 +83,18 @@ public class PeopleController(
    [ProducesResponseType(StatusCodes.Status200OK)]
    public IActionResult Update(
       Guid id,
-      [FromBody] Person updatedPerson
+      [FromBody] Person updPerson
    ) {
       var person = peopleRepository.FindById(id);
       if (person == null) {
          return NotFound();
       }
-      person.Update(updatedPerson);
+      // domain model
+      person.Update(updPerson.FirstName, updPerson.LastName, updPerson.Email, updPerson.Phone);
+      // repository
       peopleRepository.Update(person);
       dataContext.SaveAllChanges();
+      
       return Ok(person);
    }
 
