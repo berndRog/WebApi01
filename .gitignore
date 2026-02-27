@@ -468,3 +468,20 @@ coverage*.xml
 
 # Misc
 *.log
+
+# Ensure bin/ and obj/ folders are ignored everywhere (more robust)
+**/[Bb]in/**
+**/[Oo]bj/**
+
+# Ignore MSBuild BuildHost artifacts (can appear under bin/Debug/net*/BuildHost-*)
+**/BuildHost-*/**
+**/BuildHost-*/**/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.*
+**/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.*
+**/*BuildHost*.deps.json
+**/*BuildHost*.runtimeconfig.json
+**/*BuildHost*.exe.config
+
+# Specific runtime/deps files sometimes emitted under BuildHost folders
+**/*.deps.json
+**/*.runtimeconfig.json
+**/*.exe.config
