@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <RootNamespace>WebApi</RootNamespace>
+  </PropertyGroup>
+  
+
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebApi_1_Controllers\WebApi_1_Controllers.csproj" />
+    <ProjectReference Include="..\WebApi_2_Modules\WebApi_2_Modules.csproj" />
+    <ProjectReference Include="..\WebApi_3_Infrastructure\WebApi_3_Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
