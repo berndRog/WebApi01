@@ -10,7 +10,6 @@ public static class CommonErrors {
    // ------------------------------------------------------------------------
    // Identity / communication
    // ------------------------------------------------------------------------
-
    public static readonly DomainErrors InvalidEmail =
       new(
          ErrorCode.BadRequest,
@@ -38,14 +37,6 @@ public static class CommonErrors {
          Title: "Street is required",
          Message: "A street must be provided when specifying an address."
       );
-
-   
-   public static readonly DomainErrors NumberIsRequired =
-      new(
-         ErrorCode.BadRequest,
-         Title: "Number is required",
-         Message: "A number must be provided when specifying an street + number."
-      );
    
    public static readonly DomainErrors PostalCodeIsRequired =
       new(
@@ -64,7 +55,6 @@ public static class CommonErrors {
    // ------------------------------------------------------------------------
    // Time / auditing
    // ------------------------------------------------------------------------
-
    public static readonly DomainErrors TimestampIsRequired =
       new(
          ErrorCode.BadRequest,

@@ -30,11 +30,6 @@ public static class CustomerErrors {
       new(ErrorCode.BadRequest,
          Title: "Customer: Invalid last name",
          Message: "The provided last name is too short or too long (2–100 characters).");
-   
-   public static readonly DomainErrors CompanyNameIsRequired =
-      new(ErrorCode.BadRequest,
-         Title: "Customer: Company name required",
-         Message: "A Company name must be provided.");
 
    public static readonly DomainErrors InvalidCompanyName =
       new(ErrorCode.BadRequest,

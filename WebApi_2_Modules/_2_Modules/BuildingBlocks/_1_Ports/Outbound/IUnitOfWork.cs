@@ -1,4 +1,4 @@
-namespace WebApi._2_Modules.Customers._1_Ports.Outbound;
+namespace WebApi._2_Modules.BuildingBlocks._1_Ports.Outbound;
 
 public interface IUnitOfWork {
    Task<int> SaveAllChangesAsync(

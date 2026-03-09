@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using WebApi._2_Modules.Customers._1_Ports.Outbound;
+using WebApi._2_Modules.BuildingBlocks._1_Ports.Outbound;
 namespace WebApi._3_Infrastructure._2_Persistence.Database;
 
 public sealed class UnitOfWork(

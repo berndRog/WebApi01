@@ -1,14 +1,12 @@
-using System.Net.Mail;
 using WebApi._2_Modules.BuildingBlocks._3_Domain;
 using WebApi._2_Modules.BuildingBlocks._3_Domain.Entities;
-using WebApi._2_Modules.BuildingBlocks._3_Domain.Errors;
 using WebApi._2_Modules.BuildingBlocks._3_Domain.ValueObjects;
 using WebApi._2_Modules.Customers._3_Domain.Errors;
 namespace WebApi._2_Modules.Customers._3_Domain.Entities;
 
-public class Customer : Entity {
+public class Customer : AggregateRoot {
    
-   //--- properties ----------------------------------------------------------
+   //--- properties 
    // public Guid Id { get; private set; } is inherited from Entity base class
    public string Firstname { get; private set; } = string.Empty;
    public string Lastname { get; private set; } = string.Empty;
@@ -18,7 +16,7 @@ public class Customer : Entity {
    
    public AddressVo? Address { get; private set; } = null;
    
-   //--- ctors
+   //--- ctors 
    private Customer() {
    }
 
@@ -46,8 +44,14 @@ public class Customer : Entity {
       string? companyName,
       EmailVo email,
       string? id = null,
+      DateTimeOffset createdAt = default!,
       AddressVo? address = null
    ) {
+      // Normalize input early
+      firstname = firstname.Trim();
+      lastname = lastname.Trim();
+      companyName = companyName?.Trim();
+      
       // Validate input fields
       if (string.IsNullOrWhiteSpace(firstname))
          return Result<Customer>.Failure(CustomerErrors.FirstnameIsRequired);
@@ -62,8 +66,11 @@ public class Customer : Entity {
       if (!string.IsNullOrWhiteSpace(companyName) && companyName.Length is < 2 or > 100)
          return Result<Customer>.Failure(CustomerErrors.InvalidCompanyName);
       
+      if (createdAt == default)
+         return Result<Customer>.Failure(CustomerErrors.CreatedAtIsRequired);
+      
       // Resolve an entity id from an optional raw string.
-      var resultId = Entity.Resolve(id, CustomerErrors.InvalidId);
+      var resultId = Resolve(id, CustomerErrors.InvalidId);
       if (resultId.IsFailure)
          return Result<Customer>.Failure(resultId.Error);
       var localId = resultId.Value;

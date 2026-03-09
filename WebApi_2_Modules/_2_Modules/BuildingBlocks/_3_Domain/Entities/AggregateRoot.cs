@@ -1,4 +1,3 @@
-using WebApi._2_Modules.Customers._1_Ports.Outbound;
 namespace WebApi._2_Modules.BuildingBlocks._3_Domain.Entities;
 
 // Base class for all aggregate roots in the domain model.
@@ -6,10 +5,7 @@ namespace WebApi._2_Modules.BuildingBlocks._3_Domain.Entities;
 // Responsibilities:
 // - Inherits identity semantics from Entity.
 // - Manages audit timestamps (CreatedAt, UpdatedAt).
-// - Ensures time abstraction via IClock (testability).
 public abstract class AggregateRoot : Entity {
-   // Abstraction over system time.
-   protected readonly IClock _clock;
 
    // Timestamp when the aggregate was created (Should only be set once).
    public DateTimeOffset CreatedAt { get; protected set; }
@@ -17,29 +13,18 @@ public abstract class AggregateRoot : Entity {
    // Timestamp of the last modification of the aggregate (Updated on every state change).
    public DateTimeOffset UpdatedAt { get; protected set; }
 
-   // Ctor injection of time provider.
-   // - No direct dependency on system clock.
-   // - Proper initialization of audit fields.
-   protected AggregateRoot(IClock clock) {
-      _clock = clock;
-
-      CreatedAt = _clock.UtcNow;
-      UpdatedAt = _clock.UtcNow;
-   }
+   // ctor
+   protected AggregateRoot() { }
    
    // Explicitly sets the creation timestamp.
    // Guard: CreatedAt must not be default.
-   protected void SetCreatedAt(DateTimeOffset createdAt) {
+   protected void Initialize(DateTimeOffset createdAt) {
       if (createdAt == default)
          throw new ArgumentException("createdAt must be set.", nameof(createdAt));
 
       CreatedAt = createdAt;
       UpdatedAt = createdAt;
    }
-
-   // Updates the modification timestamp to the current time.
-   protected void Touch() =>
-      UpdatedAt = _clock.UtcNow;
 
    // Updates the modification timestamp using an explicit time value.
    protected void Touch(DateTimeOffset utcNow) =>
