@@ -464,7 +464,8 @@ coverage*.xml
 # SQLite DB files (ignore local DBs)
 *.db
 *.db-journal
-
+*.db-shm
+*.db-wal
 
 # Misc
 *.log
