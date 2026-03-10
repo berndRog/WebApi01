@@ -1,5 +1,6 @@
 using WebApi._2_Modules.BuildingBlocks._1_Ports.Outbound;
 using WebApi._2_Modules.BuildingBlocks._3_Domain.ValueObjects;
+using WebApi._2_Modules.Customers._1_Ports.Outbound;
 using WebApi._2_Modules.Customers._3_Domain.Entities;
 using WebApi._3_Infrastructure._2_Persistence;
 using WebApi._3_Infrastructure._2_Persistence.Database;
@@ -97,21 +98,8 @@ public class Program {
       if (app.Environment.IsDevelopment()) {
          using var scope = app.Services.CreateScope();
          var services = scope.ServiceProvider;
-         var db = services.GetRequiredService<BankingDbContext>();
-         var unitOfWork = services.GetRequiredService<IUnitOfWork>();
-
-      
-         // Ensure database is created
-         db.Database.EnsureCreated();
-      
-         // Seed if empty
-         if (!db.Customers.Any()) {
-            
-            var seed = new Seed();
-            db.Customers.AddRange(seed.Customers);
-            unitOfWork.SaveAllChangesAsync("");
-         }
+         var seedDatabase = services.GetRequiredService<ISeedDatabase>();
+         seedDatabase.Run();
       }
    }
-   
 }

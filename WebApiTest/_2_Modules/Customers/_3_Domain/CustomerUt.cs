@@ -16,7 +16,6 @@ public sealed class CustomerUt {
    private readonly string _lastname;
    private readonly string _companyName;
    private readonly EmailVo _email;
-   private readonly string _subject;
    private readonly string _id;
    private readonly AddressVo _address1 = default!;
 
@@ -31,8 +30,6 @@ public sealed class CustomerUt {
       _lastname = "Rogalla";
       _companyName = "BR Software GmbH";
       _email = EmailVo.Create("b.rogalla@mail.local").Value;
-      _subject = "system";
-
       _address1 = _seed.Address1;
    }
 
@@ -432,8 +429,7 @@ public sealed class CustomerUt {
    }
 
    #endregion
-
-
+   
 
    #region --- ChangeEmail tests ---------------------------
    /*

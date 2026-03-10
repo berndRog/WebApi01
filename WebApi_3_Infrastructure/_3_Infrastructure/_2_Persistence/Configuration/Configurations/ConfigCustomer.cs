@@ -16,22 +16,21 @@ public sealed class ConfigCustomer
       // Primitive Properties
       builder.Property(c => c.Firstname)
          .IsRequired()
-         .HasMaxLength(100);
+         .HasMaxLength(80);
 
       builder.Property(c => c.Lastname)
          .IsRequired()
-         .HasMaxLength(100);
+         .HasMaxLength(80);
 
       builder.Property(c => c.CompanyName)
-         .HasMaxLength(100);
+         .HasMaxLength(80);
 
       // Email Value Object
       builder.OwnsOne(c => c.Email, email => {
          email.Property(e => e.Value)
             .HasColumnName("Email")
             .IsRequired()
-            .HasMaxLength(320);
-
+            .HasMaxLength(254);
          email.WithOwner();
       });
 
@@ -39,19 +38,19 @@ public sealed class ConfigCustomer
       builder.OwnsOne(c => c.Address, address => {
          address.Property(a => a.Street)
             .HasColumnName("Street")
-            .HasMaxLength(200);
+            .HasMaxLength(80);
 
          address.Property(a => a.PostalCode)
             .HasColumnName("PostalCode")
-            .HasMaxLength(20);
+            .HasMaxLength(10);
 
          address.Property(a => a.City)
             .HasColumnName("City")
-            .HasMaxLength(100);
+            .HasMaxLength(80);
 
          address.Property(a => a.Country)
             .HasColumnName("Country")
-            .HasMaxLength(100);
+            .HasMaxLength(80);
 
          address.WithOwner();
       });

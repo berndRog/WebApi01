@@ -18,7 +18,7 @@ public static class DiInfrastructureModules {
       var connectionString = configuration.GetConnectionString("WebApiDb");
       Console.WriteLine("---> Using SQLite connection string: " + connectionString);
       
-      services.AddDbContext<BankingDbContext>(options =>
+      services.AddDbContext<WebDbContext>(options =>
          options.UseSqlite(connectionString)
       );
 
@@ -34,6 +34,9 @@ public static class DiInfrastructureModules {
       
       // Unit of Work
       services.AddScoped<IUnitOfWork, UnitOfWork>();
+      
+      // Seed Database
+      services.AddScoped<ISeedDatabase, SeedDatabase>();
 
       return services;
    }

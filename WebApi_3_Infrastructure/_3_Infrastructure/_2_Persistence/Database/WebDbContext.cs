@@ -1,10 +1,12 @@
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using WebApi._2_Modules.Customers._3_Domain.Entities;
 using WebApi._3_Infrastructure._2_Persistence.Configuration.Configurations;
+[assembly: InternalsVisibleTo("WebApiTest")]
 namespace WebApi._3_Infrastructure._2_Persistence.Database;
 
-public sealed partial class BankingDbContext(
-   DbContextOptions<BankingDbContext> options
+internal sealed partial class WebDbContext(
+   DbContextOptions<WebDbContext> options
 ) : DbContext(options) {
    public DbSet<Customer> Customers => Set<Customer>();
    // public DbSet<Account> Accounts => Set<Account>();
