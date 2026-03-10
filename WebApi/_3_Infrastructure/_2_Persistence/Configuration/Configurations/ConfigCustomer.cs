@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WebApi._2_Modules.Customers._3_Domain.Entities;
+using WebApi._2_Core.Customers._3_Domain.Entities;
 namespace WebApi._3_Infrastructure._2_Persistence.Configuration.Configurations;
 
 public sealed class ConfigCustomer 

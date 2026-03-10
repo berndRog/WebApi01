@@ -1,7 +1,7 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using WebApi._2_Modules.BuildingBlocks._1_Ports.Outbound;
-using WebApi._2_Modules.Customers._1_Ports.Outbound;
+using WebApi._2_Core.BuildingBlocks._1_Ports.Outbound;
+using WebApi._2_Core.Customers._1_Ports.Outbound;
 using WebApi._3_Infrastructure._2_Persistence.Database;
 using WebApi._3_Infrastructure._2_Persistence.Repositories;
 namespace WebApiTest._3_Infrastructure._2_Persistence.Repositories;

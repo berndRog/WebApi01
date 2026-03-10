@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
-using WebApi._2_Modules.Customers._3_Domain.Entities;
+using WebApi._2_Core.Customers._3_Domain.Entities;
 using WebApi._3_Infrastructure._2_Persistence.Configuration.Configurations;
 [assembly: InternalsVisibleTo("WebApiTest")]
 namespace WebApi._3_Infrastructure._2_Persistence.Database;

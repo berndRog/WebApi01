@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
-using WebApi._2_Modules.Customers._1_Ports.Outbound;
-using WebApi._2_Modules.Customers._3_Domain.Entities;
+using WebApi._2_Core.Customers._1_Ports.Outbound;
+using WebApi._2_Core.Customers._3_Domain.Entities;
 [assembly: InternalsVisibleTo("WebApiTest")]
 namespace WebApi._3_Infrastructure._2_Persistence.Database;
 

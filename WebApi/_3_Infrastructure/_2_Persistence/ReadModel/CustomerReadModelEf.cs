@@ -1,10 +1,10 @@
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
-using WebApi._2_Modules.BuildingBlocks._3_Domain;
-using WebApi._2_Modules.Customers._1_Ports.Outbound;
-using WebApi._2_Modules.Customers._2_Application.Dtos;
-using WebApi._2_Modules.Customers._2_Application.Error;
-using WebApi._2_Modules.Customers._2_Application.Mappings;
+using WebApi._2_Core.BuildingBlocks._3_Domain;
+using WebApi._2_Core.Customers._1_Ports.Outbound;
+using WebApi._2_Core.Customers._2_Application.Dtos;
+using WebApi._2_Core.Customers._2_Application.Error;
+using WebApi._2_Core.Customers._2_Application.Mappings;
 [assembly: InternalsVisibleTo("WebApiTest")]
 namespace WebApi._3_Infrastructure._2_Persistence.ReadModel;
 

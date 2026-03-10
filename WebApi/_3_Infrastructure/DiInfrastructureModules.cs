@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using WebApi._2_Modules.BuildingBlocks._1_Ports.Outbound;
-using WebApi._2_Modules.Customers._1_Ports.Outbound;
+using WebApi._2_Core.BuildingBlocks._1_Ports.Outbound;
+using WebApi._2_Core.Customers._1_Ports.Outbound;
 using WebApi._3_Infrastructure._2_Persistence.Database;
 using WebApi._3_Infrastructure._2_Persistence.ReadModel;
 using WebApi._3_Infrastructure._2_Persistence.Repositories;

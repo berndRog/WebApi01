@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WebApi._2_Modules.BuildingBlocks._3_Domain.ValueObjects;
+using WebApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
 namespace WebApi._3_Infrastructure._2_Persistence.Converters;
 
 public static class EmailPropertyBuilderExtensions {

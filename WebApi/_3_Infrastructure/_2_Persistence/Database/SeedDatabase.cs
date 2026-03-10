@@ -1,4 +1,4 @@
-using WebApi._2_Modules.BuildingBlocks._1_Ports.Outbound;
+using WebApi._2_Core.BuildingBlocks._1_Ports.Outbound;
 namespace WebApi._3_Infrastructure._2_Persistence.Database;
 
 internal class SeedDatabase(

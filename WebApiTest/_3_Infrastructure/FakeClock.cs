@@ -1,4 +1,4 @@
-using WebApi._2_Modules.BuildingBlocks._1_Ports.Outbound;
+using WebApi._2_Core.BuildingBlocks._1_Ports.Outbound;
 namespace WebApiTest._3_Infrastructure;
 
 public sealed class FakeClock : IClock {
