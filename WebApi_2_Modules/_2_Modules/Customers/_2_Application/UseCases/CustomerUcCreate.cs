@@ -13,28 +13,29 @@ namespace WebApi._2_Modules.Customers._2_Application.UseCases;
 public sealed class CustomerUcCreate(
    ICustomerRepository repository,
    IUnitOfWork unitOfWork,
+   IClock clock,
    ILogger<CustomerUcCreate> logger
 ) {
 
    public async Task<Result<CustomerDto>> ExecuteAsync(
-      string firstname,
-      string lastname,
-      string? companyName,
-      string emailString,
-      string? id,
-      AddressDto? addressDto,
+      CustomerDto customerDto,
       CancellationToken ct = default
    ) {
-
+      var emailString = customerDto.Email;
+      var addressDto = customerDto.AddressDto;
+      
+      // Validate email format and create EmailVo
       var resultEmail = EmailVo.Create(emailString);
       if (resultEmail.IsFailure)
          return Result<CustomerDto>.Failure(resultEmail.Error);
       var email = resultEmail.Value;
       
+      // Check if email is unique (not used by another customer)
       if (await repository.FindByEmailAsync(email, ct) != null) {
          return Result<CustomerDto>.Failure(CustomerApplicationErrors.EmailMustBeUnique);
       }
 
+      // Validate address if provided and create AddressVo
       AddressVo? addressVo = null;
       if(addressDto is not null) {
          var resultAddress = AddressVo.Create(
@@ -48,13 +49,14 @@ public sealed class CustomerUcCreate(
          addressVo = resultAddress.Value;
       }
       
+      // Create Customer entity using factory method
       var result = Customer.Create(
-         //clock: clock,
-         firstname: firstname, 
-         lastname: lastname,
-         companyName: companyName, 
+         firstname: customerDto.Firstname, 
+         lastname: customerDto.Lastname,
+         companyName: customerDto.CompanyName, 
          email: email,
-         id: id,
+         id: customerDto.Id.ToString(),
+         createdAt: clock.UtcNow,
          address: addressVo
       );
 

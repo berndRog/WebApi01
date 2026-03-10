@@ -46,13 +46,22 @@ public sealed record AddressVo {
       
       if (string.IsNullOrWhiteSpace(street))
          return Result<AddressVo>.Failure(CommonErrors.StreetIsRequired);
+      if (street.Length is < 2 or > 80)
+         return Result<AddressVo>.Failure(CommonErrors.InvalidStreet);
       
       if (string.IsNullOrWhiteSpace(postalCode))
          return Result<AddressVo>.Failure(CommonErrors.PostalCodeIsRequired);
+      if (postalCode.Length is < 2 or > 10)
+         return Result<AddressVo>.Failure(CommonErrors.InvalidPostalCode);
 
       if (string.IsNullOrWhiteSpace(city))
          return Result<AddressVo>.Failure(CommonErrors.CityIsRequired);
+      if (city.Length is < 2 or > 80)
+         return Result<AddressVo>.Failure(CommonErrors.InvalidCity);
 
+      if (country?.Length is < 2 or > 80)
+         return Result<AddressVo>.Failure(CommonErrors.InvalidCountry);
+      
       return Result<AddressVo>.Success(new AddressVo(street, postalCode, city, country));
    }
 }

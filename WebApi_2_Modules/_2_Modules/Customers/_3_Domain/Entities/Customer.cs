@@ -11,6 +11,7 @@ public class Customer : AggregateRoot {
    public string Firstname { get; private set; } = string.Empty;
    public string Lastname { get; private set; } = string.Empty;
    public string? CompanyName { get; private set; } = null;
+   
    // public string Email { get; private set; } = string.Empty;
    public EmailVo Email { get; private set; } = null!;
    
@@ -25,7 +26,6 @@ public class Customer : AggregateRoot {
       string firstname,
       string lastname,
       string? companyName,
-      // string email,
       EmailVo email,
       AddressVo? address = null
    ) {
@@ -55,7 +55,7 @@ public class Customer : AggregateRoot {
       // Validate input fields
       if (string.IsNullOrWhiteSpace(firstname))
          return Result<Customer>.Failure(CustomerErrors.FirstnameIsRequired);
-      if (firstname.Length is < 2 or > 100)
+      if (firstname.Length is < 2 or > 80)
          return Result<Customer>.Failure(CustomerErrors.InvalidFirstname);
 
       if (string.IsNullOrWhiteSpace(lastname))
@@ -63,7 +63,7 @@ public class Customer : AggregateRoot {
       if (lastname.Length is < 2 or > 80)
          return Result<Customer>.Failure(CustomerErrors.InvalidLastname);
 
-      if (!string.IsNullOrWhiteSpace(companyName) && companyName.Length is < 2 or > 100)
+      if (!string.IsNullOrWhiteSpace(companyName) && companyName.Length is < 2 or > 80)
          return Result<Customer>.Failure(CustomerErrors.InvalidCompanyName);
       
       if (createdAt == default)

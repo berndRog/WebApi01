@@ -12,20 +12,10 @@ public class CustomerUseCases(
 ): ICustomerUseCases {
 
    public Task<Result<CustomerDto>> CreateAsync(
-      string firstname,
-      string lastname,
-      string? companyName,
-      string emailString,
-      string? id,
-      AddressDto? addressDto,   
+      CustomerDto customerDto,  
       CancellationToken ct
    ) => createUc.ExecuteAsync(
-      firstname: firstname, 
-      lastname: lastname, 
-      companyName: companyName, 
-      emailString: emailString, 
-      id: id, 
-      addressDto: addressDto, 
+      customerDto: customerDto,
       ct: ct
    );
 }

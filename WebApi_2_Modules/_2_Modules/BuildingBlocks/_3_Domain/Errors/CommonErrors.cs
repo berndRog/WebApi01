@@ -34,23 +34,41 @@ public static class CommonErrors {
    public static readonly DomainErrors StreetIsRequired =
       new(
          ErrorCode.BadRequest,
-         Title: "Street is required",
+         Title: "Address: Street is required",
          Message: "A street must be provided when specifying an address."
       );
+   public static readonly DomainErrors InvalidStreet =
+      new(ErrorCode.BadRequest,
+         Title: "Address: Invalid street name",
+         Message: "The provided street name is too short or too long (2–80 characters).");
    
    public static readonly DomainErrors PostalCodeIsRequired =
       new(
          ErrorCode.BadRequest,
-         Title: "Postal code is required",
+         Title: "Address: Postal code is required",
          Message: "A postal code must be provided when specifying an address."
       );
-
+   public static readonly DomainErrors InvalidPostalCode =
+      new(ErrorCode.BadRequest,
+         Title: "Address: Invalid postal code",
+         Message: "The provided postal code is too short or too long (2–10 characters).");
+   
+   
    public static readonly DomainErrors CityIsRequired =
       new(
          ErrorCode.BadRequest,
-         Title: "City is required",
+         Title: "Address:City is required",
          Message: "A city must be provided when specifying an address."
       );
+   public static readonly DomainErrors InvalidCity =
+      new(ErrorCode.BadRequest,
+         Title: "Address: Invalid city",
+         Message: "The provided city is too short or too long (2–80 characters).");
+   
+   public static readonly DomainErrors InvalidCountry =
+      new(ErrorCode.BadRequest,
+         Title: "Address: Invalid country",
+         Message: "The provided country is too short or too long (2–80 characters).");
 
    // ------------------------------------------------------------------------
    // Time / auditing
