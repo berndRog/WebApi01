@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using WebApi._2_Modules.Customers._1_Ports.Inbound;
-using WebApi._2_Modules.Customers._1_Ports.Outbound;
 using WebApi._2_Modules.Customers._2_Application.UseCases;
 
 namespace WebApi._2_Modules.Customers;

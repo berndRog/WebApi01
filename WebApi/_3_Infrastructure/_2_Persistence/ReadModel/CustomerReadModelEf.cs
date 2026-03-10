@@ -8,7 +8,7 @@ using WebApi._2_Modules.Customers._2_Application.Mappings;
 [assembly: InternalsVisibleTo("WebApiTest")]
 namespace WebApi._3_Infrastructure._2_Persistence.ReadModel;
 
-public sealed class CustomerReadModelEf(
+internal sealed class CustomerReadModelEf(
    ICustomersDbContext customersDbContext
 ) : ICustomerReadModel {
    

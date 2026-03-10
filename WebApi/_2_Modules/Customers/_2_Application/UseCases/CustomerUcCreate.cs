@@ -1,6 +1,6 @@
+using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging;
 using WebApi._2_Modules.BuildingBlocks._1_Ports.Outbound;
-using WebApi._2_Modules.BuildingBlocks._2_Application.Dtos;
 using WebApi._2_Modules.BuildingBlocks._3_Domain;
 using WebApi._2_Modules.BuildingBlocks._3_Domain.ValueObjects;
 using WebApi._2_Modules.Customers._1_Ports.Outbound;
@@ -8,9 +8,10 @@ using WebApi._2_Modules.Customers._2_Application.Dtos;
 using WebApi._2_Modules.Customers._2_Application.Error;
 using WebApi._2_Modules.Customers._2_Application.Mappings;
 using WebApi._2_Modules.Customers._3_Domain.Entities;
+[assembly: InternalsVisibleTo("WebApiTest")]
 namespace WebApi._2_Modules.Customers._2_Application.UseCases;
 
-public sealed class CustomerUcCreate(
+internal sealed class CustomerUcCreate(
    ICustomerRepository repository,
    IUnitOfWork unitOfWork,
    IClock clock,

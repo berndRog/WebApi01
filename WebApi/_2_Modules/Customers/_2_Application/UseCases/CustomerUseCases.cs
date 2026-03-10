@@ -1,13 +1,13 @@
-using WebApi._2_Modules.BuildingBlocks._2_Application.Dtos;
+using System.Runtime.CompilerServices;
 using WebApi._2_Modules.BuildingBlocks._3_Domain;
-using WebApi._2_Modules.BuildingBlocks._3_Domain.ValueObjects;
 using WebApi._2_Modules.Customers._1_Ports.Inbound;
 using WebApi._2_Modules.Customers._2_Application.Dtos;
+[assembly: InternalsVisibleTo("WebApiTest")]
 namespace WebApi._2_Modules.Customers._2_Application.UseCases;
 
 
 // UseCases Facade for Customer aggregate
-public class CustomerUseCases(
+internal class CustomerUseCases(
    CustomerUcCreate createUc
 ): ICustomerUseCases {
 
