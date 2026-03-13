@@ -6,6 +6,7 @@ using WebApi._2_Core.Customers._1_Ports.Outbound;
 using WebApi._3_Infrastructure._2_Persistence.Database;
 using WebApi._3_Infrastructure._2_Persistence.ReadModel;
 using WebApi._3_Infrastructure._2_Persistence.Repositories;
+using WebApi._3_Infrastructure._3_Security;
 namespace WebApi._3_Infrastructure;
 
 public static class DiInfrastructureModules {
@@ -23,8 +24,7 @@ public static class DiInfrastructureModules {
       );
 
       // BC Db Contexts
-      services.AddScoped<ICustomersDbContext, CustomersDbContextEf>(); 
-      
+      services.AddScoped<ICustomerDbContext, CustomerDbContextEf>(); 
       
       // ReadModels
       services.AddScoped<ICustomerReadModel, CustomerReadModelEf>();   
@@ -34,6 +34,9 @@ public static class DiInfrastructureModules {
       
       // Unit of Work
       services.AddScoped<IUnitOfWork, UnitOfWork>();
+      
+      // IdentityGateway
+      services.AddScoped<IIdentityGateway, IdentityGatewayHttpContext>();
       
       // Seed Database
       services.AddScoped<ISeedDatabase, SeedDatabase>();

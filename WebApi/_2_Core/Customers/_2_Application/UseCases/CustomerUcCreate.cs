@@ -7,11 +7,13 @@ using WebApi._2_Core.Customers._1_Ports.Outbound;
 using WebApi._2_Core.Customers._2_Application.Dtos;
 using WebApi._2_Core.Customers._2_Application.Error;
 using WebApi._2_Core.Customers._2_Application.Mappings;
+using WebApi._2_Core.Customers._3_Domain;
 using WebApi._2_Core.Customers._3_Domain.Entities;
 [assembly: InternalsVisibleTo("WebApiTest")]
 namespace WebApi._2_Core.Customers._2_Application.UseCases;
 
 internal sealed class CustomerUcCreate(
+   IIdentityGateway identityGateway,
    ICustomerRepository repository,
    IUnitOfWork unitOfWork,
    IClock clock,
@@ -24,6 +26,12 @@ internal sealed class CustomerUcCreate(
    ) {
       var emailString = customerDto.EmailString;
       var addressDto = customerDto.AddressDto;
+      
+      // 1) subject required
+      var resultSubject = IdentitySubject.Check(identityGateway.Subject);
+      if (resultSubject.IsFailure) 
+         return Result<CustomerDto>.Failure(resultSubject.Error);
+      var subject = resultSubject.Value;
       
       // Validate email format and create EmailVo
       var resultEmail = EmailVo.Create(emailString);
@@ -55,10 +63,11 @@ internal sealed class CustomerUcCreate(
          firstname: customerDto.Firstname, 
          lastname: customerDto.Lastname,
          companyName: customerDto.CompanyName, 
-         email: email,
+         subject: subject,
+         emailVo: email,
          id: customerDto.Id.ToString(),
          createdAt: clock.UtcNow,
-         address: addressVo
+         addressVo: addressVo
       );
 
       if (result.IsFailure)

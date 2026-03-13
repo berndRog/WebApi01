@@ -1,0 +1,20 @@
+using WebApi._2_Core.BuildingBlocks._3_Domain;
+using WebApi._2_Core.BuildingBlocks._3_Domain.Errors;
+namespace WebApi._2_Core.Customers._3_Domain;
+
+
+public static class IdentitySubject {
+   
+   // default system identity, without any IAM
+   public static string System() => "system";
+   
+   public static Result<string> Check(string input) {
+      if (string.IsNullOrWhiteSpace(input))
+         return Result<string>.Failure(CommonErrors.InvalidIdentitySubject);
+      if (input.Length > 200)
+         return Result<string>.Failure(CommonErrors.InvalidIdentitySubject);
+
+      /// Identity subject as issued by IAM (opaque, not interpreted).
+      return Result<string>.Success(input);
+   }
+}

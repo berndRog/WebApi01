@@ -6,7 +6,7 @@ using WebApi._2_Core.BuildingBlocks._1_Ports.Outbound;
 namespace WebApi._3_Infrastructure._2_Persistence.Database;
 
 internal sealed class UnitOfWork(
-   DbContext dbContext,
+   WebDbContext dbContext,
    ILogger<UnitOfWork> logger
 ) : IUnitOfWork {
    public async Task<int> SaveAllChangesAsync(

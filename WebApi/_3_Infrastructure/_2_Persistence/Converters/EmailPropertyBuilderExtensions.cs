@@ -5,8 +5,8 @@ namespace WebApi._3_Infrastructure._2_Persistence.Converters;
 public static class EmailPropertyBuilderExtensions {
    
    public static PropertyBuilder<EmailVo> HasEmailConversion(this PropertyBuilder<EmailVo> builder) {
-      builder.HasConversion(EmailEf.Converter);
-      builder.Metadata.SetValueComparer(EmailEf.Comparer);
+      builder.HasConversion(EmailConversionEf.Converter);
+      builder.Metadata.SetValueComparer(EmailConversionEf.Comparer);
       builder.HasMaxLength(254);
       return builder;
    }

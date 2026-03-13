@@ -1,58 +1,114 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WebApi._2_Core.Customers._3_Domain.Entities;
+using WebApi._3_Infrastructure._2_Persistence.Converters;
+using WebApi._3_Infrastructure._2_Persistence.Database.Converter;
 namespace WebApi._3_Infrastructure._2_Persistence.Configuration.Configurations;
 
-public sealed class ConfigCustomer 
-   : IEntityTypeConfiguration<Customer>
-{
+public sealed class ConfigCustomer(
+   DateTimeOffsetToIsoStringConverter dtConv,
+   DateTimeOffsetToIsoStringConverterNullable dtConvNul
+) : IEntityTypeConfiguration<Customer> {
+
    public void Configure(EntityTypeBuilder<Customer> builder) {
       
-      builder.ToTable("Customer");
+      
+      builder.ToTable("Customers");
 
-      // Primary Key (aus Entity Basisklasse)
-      builder.HasKey(c => c.Id);
+      // Key + concurrency
+      // -----------------------------
+      builder.HasKey(o => o.Id);
+      builder.Property(o => o.Id).ValueGeneratedNever();
+      
+      // Auditing timestamps
+      // -----------------------------
+      builder.Property(o => o.CreatedAt)
+         .HasConversion(dtConv)
+         .IsRequired();
 
-      // Primitive Properties
-      builder.Property(c => c.Firstname)
-         .IsRequired()
-         .HasMaxLength(80);
+      builder.Property(o => o.UpdatedAt)
+         .HasConversion(dtConv)
+         .IsRequired();
 
-      builder.Property(c => c.Lastname)
-         .IsRequired()
-         .HasMaxLength(80);
+      // Domain-only
+      builder.Ignore(o => o.DisplayName);
+      builder.Ignore(o => o.IsActive);
+      builder.Ignore(o => o.IsProfileComplete);
 
-      builder.Property(c => c.CompanyName)
-         .HasMaxLength(80);
+      // Profile data
+      builder.Property(o => o.Firstname)
+         .HasMaxLength(80)
+         .IsRequired();
+      builder.Property(o => o.Lastname)
+         .HasMaxLength(80)
+         .IsRequired();
+      builder.Property(o => o.CompanyName)
+         .HasMaxLength(80)
+         .IsRequired(false);
 
-      // Email Value Object
-      builder.OwnsOne(c => c.Email, email => {
-         email.Property(e => e.Value)
-            .HasColumnName("Email")
-            .IsRequired()
-            .HasMaxLength(254);
-         email.WithOwner();
-      });
+      // Email-VO als Property mapped via Extension
+      builder.Property(x => x.EmailVo)
+         .HasEmailConversion()
+         .IsRequired();
+      // optional: unique index
+      builder.HasIndex(x => x.EmailVo).IsUnique();;
 
-      // Address Value Object (optional)
-      builder.OwnsOne(c => c.Address, address => {
-         address.Property(a => a.Street)
+      builder.Property(o => o.Subject)
+         .HasMaxLength(200)
+         .IsRequired();
+      builder.HasIndex(o => o.Subject).IsUnique();
+
+      // Status
+      builder.Property(o => o.Status)
+         .HasConversion<int>()   // or .HasConversion<string>()
+         .IsRequired();
+
+      // Employee decisions / audit facts
+      builder.Property(o => o.ActivatedAt)
+         .HasConversion(dtConvNul)
+         .IsRequired(false);
+
+      builder.Property(o => o.RejectedAt)
+         .HasConversion(dtConvNul)
+         .IsRequired(false);
+
+      builder.Property(o => o.RejectionReason)
+         .HasMaxLength(100)
+         .IsRequired(false);
+
+      builder.Property(o => o.AuditedByEmployeeId)
+         .IsRequired(false);
+
+      builder.Property(o => o.DeactivatedAt)
+         .HasConversion(dtConvNul)
+         .IsRequired(false);
+
+      builder.Property(o => o.DeactivatedByEmployeeId)
+         .IsRequired(false);
+
+      // Address (owned value object)
+      builder.OwnsOne(o => o.AddressVo, a => {
+         a.Property(p => p.Street)
+            .HasMaxLength(80)
             .HasColumnName("Street")
-            .HasMaxLength(80);
-
-         address.Property(a => a.PostalCode)
+            .IsRequired(false);
+         a.Property(p => p.PostalCode)
+            .HasMaxLength(20)
             .HasColumnName("PostalCode")
-            .HasMaxLength(10);
-
-         address.Property(a => a.City)
+            .IsRequired(false);
+         a.Property(p => p.City)
+            .HasMaxLength(80)
             .HasColumnName("City")
-            .HasMaxLength(80);
-
-         address.Property(a => a.Country)
+            .IsRequired(false);
+         a.Property(p => p.Country)
+            .HasMaxLength(80)
             .HasColumnName("Country")
-            .HasMaxLength(80);
-
-         address.WithOwner();
+            .IsRequired(false);
       });
+      builder.Navigation(o => o.AddressVo).IsRequired(false);
+
+      // Optional indexes for admin filtering
+      builder.HasIndex(o => o.Status);
+      builder.HasIndex(o => o.CreatedAt);
    }
 }

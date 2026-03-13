@@ -9,14 +9,14 @@ using WebApi._2_Core.Customers._2_Application.Mappings;
 namespace WebApi._3_Infrastructure._2_Persistence.ReadModel;
 
 internal sealed class CustomerReadModelEf(
-   ICustomersDbContext customersDbContext
+   ICustomerDbContext customerDbContext
 ) : ICustomerReadModel {
    
    public async Task<Result<CustomerDto>> FindByIdAsync(
       Guid Id,
       CancellationToken ct
    ) {
-      var customerDto = await customersDbContext.Customers
+      var customerDto = await customerDbContext.Customers
          .AsNoTracking()
          .Where(c => c.Id == Id)          // filter by Id
          .Select(c => c.ToCustomerDto())  // project to CustomerDto (map)
@@ -30,7 +30,7 @@ internal sealed class CustomerReadModelEf(
    public async Task<Result<IEnumerable<CustomerDto>>> SelectAllAsync(
       CancellationToken ct
    ) {
-      var customerDtos = await customersDbContext.Customers
+      var customerDtos = await customerDbContext.Customers
          .AsNoTracking()
          .Select(c => c.ToCustomerDto()) // project to CustomerDto (map)
          .ToListAsync(ct);

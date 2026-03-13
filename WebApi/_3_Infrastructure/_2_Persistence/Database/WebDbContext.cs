@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using WebApi._2_Core.Customers._3_Domain.Entities;
 using WebApi._3_Infrastructure._2_Persistence.Configuration.Configurations;
+using WebApi._3_Infrastructure._2_Persistence.Database.Converter;
 [assembly: InternalsVisibleTo("WebApiTest")]
 namespace WebApi._3_Infrastructure._2_Persistence.Database;
 
@@ -14,18 +15,16 @@ internal sealed partial class WebDbContext(
    protected override void OnModelCreating(ModelBuilder modelBuilder) {
       base.OnModelCreating(modelBuilder);
 
-      // ------------------------------------------------------------
       // Reuse converter instances (stateless, deterministic).
       // This keeps mapping code explicit without pushing converters
       // into DI just for EF.
       // ------------------------------------------------------------
       var dtConv = new DateTimeOffsetToIsoStringConverter();
       var dtConvNul = new DateTimeOffsetToIsoStringConverterNullable();
-      // ------------------------------------------------------------
+      
       // Apply entity mappings (aggregate roots first).
       // ------------------------------------------------------------
-      modelBuilder.ApplyConfiguration(new ConfigCustomer());
-   // modelBuilder.ApplyConfiguration(new ConfigCustomer(dtConv, dtConvNul));
+      modelBuilder.ApplyConfiguration(new ConfigCustomer(dtConv, dtConvNul));
    
    }
 

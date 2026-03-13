@@ -1,6 +1,6 @@
 using System.Globalization;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-namespace WebApi._3_Infrastructure._2_Persistence.Database;
+namespace WebApi._3_Infrastructure._2_Persistence.Database.Converter;
 
 
 public sealed class DateTimeOffsetToIsoStringConverter() 

@@ -10,6 +10,13 @@ public static class CustomerErrors {
          Title: "Customer: Invalid Customer Id",
          Message: "The given id is invalid.");
    
+   public static readonly DomainErrors NotPending =
+      new(
+         ErrorCode.Conflict,
+         Title: "Customer: Not in pending state",
+         Message: "Only employees in pending state can be approved or rejected."
+      );
+   
    // Validation
    public static readonly DomainErrors FirstnameIsRequired =
       new(ErrorCode.BadRequest,

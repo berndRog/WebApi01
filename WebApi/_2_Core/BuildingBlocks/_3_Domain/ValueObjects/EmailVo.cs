@@ -3,9 +3,9 @@ using WebApi._2_Core.BuildingBlocks._3_Domain.Errors;
 namespace WebApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
 
 // Email value object.
-public sealed record class EmailVo {
+public sealed record EmailVo {
    // Canonical stored representation.
-   // Example: "Max.Mustermann@Example.COM " -> "max.mustermann@example.com"
+   // Example: "  Max.Mustermann@Example.COM   " -> "max.mustermann@example.com"
    public string Value { get; }
 
    // Private constructor enforces factory usage.

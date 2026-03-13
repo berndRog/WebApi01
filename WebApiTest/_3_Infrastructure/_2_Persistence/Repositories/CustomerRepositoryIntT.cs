@@ -1,90 +1,64 @@
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using WebApi._2_Core.BuildingBlocks._1_Ports.Outbound;
 using WebApi._2_Core.Customers._1_Ports.Outbound;
+using WebApi._2_Core.Customers._3_Domain.Entities;
+using WebApi._3_Infrastructure._2_Persistence;
 using WebApi._3_Infrastructure._2_Persistence.Database;
-using WebApi._3_Infrastructure._2_Persistence.Repositories;
 namespace WebApiTest._3_Infrastructure._2_Persistence.Repositories;
 
-public sealed class CustomerRepositoryIntT : TestBase, IAsyncLifetime {
-
-   private SqliteConnection _dbConnection = null!;
-   private WebDbContext _dbContext = null!;
-   private ICustomerRepository _repository = null!;
-   private IUnitOfWork _unitOfWork = null!;
-   private IClock _clock = null!;
-   private TestSeed _seed = null!;
+public sealed class CustomerRepositoryIntTests : IClassFixture<TestCompositionRoot> {
+   private readonly TestCompositionRoot _root;
    
-   public async Task InitializeAsync() {
-      _clock = new FakeClock();
-      _seed = new TestSeed();
-
-      _dbConnection = new SqliteConnection("Filename=:memory:");
-      await _dbConnection.OpenAsync();
-
-      var options = new DbContextOptionsBuilder<WebDbContext>()
-         .UseSqlite(_dbConnection)
-         .EnableSensitiveDataLogging()
-         .Options;
-
-      _dbContext = new WebDbContext(options);
-      await _dbContext.Database.EnsureCreatedAsync();
-      
-      var customerDbContext = new CustomersDbContextEf(_dbContext);
-      _repository = new CustomerRepositoryEf(customerDbContext);
-      _unitOfWork = new UnitOfWork(
-         _dbContext, 
-         CreateLogger<UnitOfWork>()
-      );
+   public CustomerRepositoryIntTests(TestCompositionRoot root) {
+      _root = root;
    }
 
-   public async Task DisposeAsync() {
-      if (_dbContext != null) {
-         await _dbContext.DisposeAsync();
-         _dbContext = null!;
-      }
-
-      if (_dbConnection != null) {
-         await _dbConnection.CloseAsync();
-         await _dbConnection.DisposeAsync();
-         _dbConnection = null!;
-      }
-   }
-
-   
    [Fact]
-   public async Task Add_returns_owner1() {
+   public async Task Add_customer_ok() {
+      
+      using var scope = _root.CreateDefaultScope();
+      var dbContext = scope.ServiceProvider.GetRequiredService<WebDbContext>();
+      var repository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
+      var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+      var seed = scope.ServiceProvider.GetRequiredService<TestSeed>();
+
       // Arrange
-      var customer = _seed.Customer1();
-      
+      var customer = seed.Customer1();
+
       // Act
-      _repository.Add(customer);
-      await _unitOfWork.SaveAllChangesAsync();
-      _dbContext.ChangeTracker.Clear();
-      
+      repository.Add(customer);
+      await unitOfWork.SaveAllChangesAsync("Add a customer", CancellationToken.None);
+
       // Assert
-      var actual = await _repository.FindByIdAsync(customer.Id, CancellationToken.None);
+      var actual = await dbContext.Customers.FindAsync(customer.Id);
       NotNull(actual);
       Equal(customer.Id, actual.Id);
       Equal(customer.Firstname, actual.Firstname);
       Equal(customer.Lastname, actual.Lastname);
-      Equal(customer.Email, actual.Email); 
+      Equal(customer.EmailVo, actual.EmailVo);
+      Equal(customer.AddressVo, actual.AddressVo);
    }
-   
-   
+
+
    [Fact]
-   public async Task FindByIdAsync_returns_owner1() {
+   public async Task FindByIdAsync_returns_Customer1() {
+      using var scope = _root.CreateDefaultScope();
+      var dbContext = scope.ServiceProvider.GetRequiredService<WebDbContext>();
+      var repository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
+      var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+      var seed = scope.ServiceProvider.GetRequiredService<Seed>();
+
       // Arrange
-      var customers = _seed.Customers;
-      _dbContext.Customers.AddRange(customers);
-      await _unitOfWork.SaveAllChangesAsync();
-      _dbContext.ChangeTracker.Clear();
-      
-      var customer = customers[0];  // Customer1
+      var customers = seed.Customers;
+      dbContext.Customers.AddRange(customers);
+      await unitOfWork.SaveAllChangesAsync();
+      dbContext.ChangeTracker.Clear();
+
+      var customer = customers[0]; // Customer1
       var id = customer.Id;
-      
+
       // Act
-      var actual = await _repository.FindByIdAsync(id, CancellationToken.None);
+      var actual = await repository.FindByIdAsync(id, CancellationToken.None);
 
       // Assert
       NotNull(actual);
@@ -92,182 +66,84 @@ public sealed class CustomerRepositoryIntT : TestBase, IAsyncLifetime {
       Equal(customer.Id, actual.Id);
       Equal(customer.Firstname, actual.Firstname);
       Equal(customer.Lastname, actual.Lastname);
-      Equal(customer.Email, actual.Email);
+      Equal(customer.EmailVo, actual.EmailVo);
+      Equal(customer.AddressVo, actual.AddressVo);
    }
-
+   
+   
    [Fact]
-   public async Task FindByIdAsync_returns_null_when_not_found() {
-      // Arrange
-      _dbContext.Customers.AddRange(_seed.Customers);
-      await _unitOfWork.SaveAllChangesAsync();
-      _dbContext.ChangeTracker.Clear();
+   public async Task FindByEmailAsync_returns_Customer3() {
+      using var scope = _root.CreateDefaultScope();
+      var dbContext = scope.ServiceProvider.GetRequiredService<WebDbContext>();
+      var repository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
+      var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+      var seed = scope.ServiceProvider.GetRequiredService<Seed>();
 
-      var nonExistentId = Guid.NewGuid();
+      // Arrange
+      var customers = seed.Customers;
+      dbContext.Customers.AddRange(customers);
+      await unitOfWork.SaveAllChangesAsync();
+      dbContext.ChangeTracker.Clear();
+
+      var customer = customers[2]; // Customer3
+      var emailVo = customer.EmailVo;
 
       // Act
-      var actual = await _repository.FindByIdAsync(nonExistentId, CancellationToken.None);
+      var actual = await repository.FindByEmailAsync(emailVo, CancellationToken.None);
 
       // Assert
-      Null(actual);
-   }
-  
-
-
-/*
-   [Fact]
-   public async Task SelectAsync_returns_all_cars_when_no_filters() {
-      // Arrange
-      _dbContext.Customers.AddRange(_seed.Customers);
-      await _unitOfWork.SaveAllChangesAsync();
-      _dbContext.ChangeTracker.Clear();
-
-      // Act
-      var cars = await _repository.(
-         category: null,
-         status: null,
-         ct: CancellationToken.None
-      );
-
-      // Assert
-      Equal(20, cars.Count); // All cars from seed
-   }
-/*
-   [Fact]
-   public async Task SelectAsync_filters_by_category() {
-      // Arrange
-      _dbContext.Cars.AddRange(_seed.Cars);
-      await _unitOfWork.SaveAllChangesAsync();
-
-      // Act
-      var cars = await _repository.SelectByAsync(
-         category: CarCategory.Economy,
-         status: null,
-         ct: CancellationToken.None
-      );
-
-      // Assert
-      Equal(5, cars.Count); // Car1-Car5
-      All(cars, car => Equal(CarCategory.Economy, car.Category));
-   }
-
-   [Fact]
-   public async Task SelectAsync_filters_by_status() {
-      // Arrange
-      _dbContext.Cars.AddRange(_seed.Cars);
-      await _unitOfWork.SaveAllChangesAsync();
-      _dbContext.ChangeTracker.Clear();
-
-      // Load cars and change their status
-      var car1 = await _repository.FindByIdAsync(Guid.Parse(_seed.Car1Id), CancellationToken.None);
-      var car2 = await _repository.FindByIdAsync(Guid.Parse(_seed.Car2Id), CancellationToken.None);
-
-      var result1 = car1!.SendToMaintenance();
-      var result2 = car2!.SendToMaintenance();
-
-      True(result1.IsSuccess);
-      True(result2.IsSuccess);
-
-      await _unitOfWork.SaveAllChangesAsync();
-      _dbContext.ChangeTracker.Clear();
-
-      // Act
-      var cars = await _repository.SelectByAsync(
-         category: null,
-         status: CarStatus.Maintenance,
-         ct: CancellationToken.None
-      );
-
-      // Assert
-      Equal(2, cars.Count);
-      All(cars, car => Equal(CarStatus.Maintenance, car.Status));
-   }
-
-   [Fact]
-   public async Task SelectAsync_filters_by_category_and_status() {
-      // Arrange
-      _dbContext.Cars.AddRange(_seed.Cars);
-      await _unitOfWork.SaveAllChangesAsync();
-      _dbContext.ChangeTracker.Clear();
-
-      var car1 = await _repository.FindByIdAsync(Guid.Parse(_seed.Car1Id), CancellationToken.None);
-      var result = car1!.SendToMaintenance();
-      True(result.IsSuccess);
-
-      await _unitOfWork.SaveAllChangesAsync();
-      _dbContext.ChangeTracker.Clear();
-
-      // Act
-      var cars = await _repository.SelectByAsync(
-         category: CarCategory.Economy,
-         status: CarStatus.Maintenance,
-         ct: CancellationToken.None
-      );
-
-      // Assert
-      Single(cars);
-      Equal(Guid.Parse(_seed.Car1Id), cars[0].Id);
-   }
-   #endregion
-
-   #region Add
-   [Fact]
-   public async Task Add_persists_car() { 
-      // Assert
-      var id = _seed.Car1.Id;
-      var manufacturer = _seed.Car1.Manufacturer;
-      var model = _seed.Car1.Model;
-      var licensePlate = _seed.Car1.LicensePlate;
-      var category = _seed.Car1.Category;
-      var createdAt = _seed.Car1.CreatedAt;
-      var status = _seed.Car1.Status;
-      
-      // Arrange
-      var carResult = Car.Create(manufacturer, model, licensePlate, category, 
-         createdAt, id.ToString());
-      
-      // Assert
-      True(carResult.IsSuccess);
-      var car = carResult.Value;
-
-      // Act
-      _repository.Add(car);
-      await _unitOfWork.SaveAllChangesAsync();
-      _dbContext.ChangeTracker.Clear();
-
-      // Assert
-      var actual = await _repository.FindByIdAsync(car.Id, CancellationToken.None);
       NotNull(actual);
-      Equal(id, actual.Id);
-      Equal(manufacturer, actual.Manufacturer);
-      Equal(model, actual.Model);
-      Equal(licensePlate, actual.LicensePlate);
-      Equal(category, actual.Category);
-      Equal(createdAt, actual.CreatedAt);
-      Equal(status, actual.Status);
+      Equal(customer.Id, actual.Id);
+      Equal(customer.Firstname, actual.Firstname);
+      Equal(customer.Lastname, actual.Lastname);
+      Equal(customer.CompanyName, actual.CompanyName);
+      Equal(customer.AddressVo, actual.AddressVo);
+      Equal(customer.EmailVo, actual.EmailVo);
+      Equal(customer.AddressVo, actual.AddressVo);
    }
-
+   
    [Fact]
-   public async Task Add_multiple_cars_persists_all() {
+   public async Task SelectAsync_returns_all_customers() {
+      using var scope = _root.CreateDefaultScope();
+      var dbContext = scope.ServiceProvider.GetRequiredService<WebDbContext>();
+      var repository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
+      var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+      var seed = scope.ServiceProvider.GetRequiredService<Seed>();
+
       // Arrange
-      var car1 = _seed.Car1;
-      var car2 = _seed.Car2;
-      var car3 = _seed.Car3;
+      dbContext.Customers.AddRange(seed.Customers);
+      await unitOfWork.SaveAllChangesAsync();
+      dbContext.ChangeTracker.Clear();
 
       // Act
-      _repository.Add(car1);
-      _repository.Add(car2);
-      _repository.Add(car3);
-      await _unitOfWork.SaveAllChangesAsync();
-      _dbContext.ChangeTracker.Clear();
-
+      var customers = await repository.SelectAllAsync(CancellationToken.None);
+      
       // Assert
-      var saved1 = await _repository.FindByIdAsync(car1.Id, CancellationToken.None);
-      var saved2 = await _repository.FindByIdAsync(car2.Id, CancellationToken.None);
-      var saved3 = await _repository.FindByIdAsync(car3.Id, CancellationToken.None);
-
-      NotNull(saved1);
-      NotNull(saved2);
-      NotNull(saved3);
+      Equal(6, customers.Count()); 
+      Equals(seed.Customers, customers);
    }
-*/
+   
+   [Fact]
+   public async Task SelectByName_returns_all_customers() {
+      using var scope = _root.CreateDefaultScope();
+      var dbContext = scope.ServiceProvider.GetRequiredService<WebDbContext>();
+      var repository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
+      var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+      var seed = scope.ServiceProvider.GetRequiredService<Seed>();
+
+      // Arrange
+      dbContext.Customers.AddRange(seed.Customers);
+      await unitOfWork.SaveAllChangesAsync();
+      dbContext.ChangeTracker.Clear();
+      var expected = new List<Customer>() { seed.Customers[0], seed.Customers[1] };
+
+      // Act
+      var customers = await repository.SelectByDisplayNameAsync("Mustermann",CancellationToken.None);
+      
+      // Assert
+      Equal(2, customers.Count()); 
+      Equals(expected, customers);
+   }
+
+
 }

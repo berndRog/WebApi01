@@ -9,7 +9,7 @@ public static class CustomerMappings {
       Firstname: customer.Firstname,
       Lastname: customer.Lastname,
       CompanyName: customer.CompanyName,
-      EmailString: customer.Email.Value,
-      AddressDto: customer.Address?.ToAddressDto()
+      EmailString: customer.EmailVo.Value,
+      AddressDto: customer.AddressVo?.ToAddressDto()
    );
 }

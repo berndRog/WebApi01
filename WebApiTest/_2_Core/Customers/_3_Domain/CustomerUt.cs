@@ -3,6 +3,7 @@ using WebApi._2_Core.BuildingBlocks._3_Domain.Errors;
 using WebApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
 using WebApi._2_Core.Customers._3_Domain.Entities;
 using WebApi._2_Core.Customers._3_Domain.Errors;
+using WebApi._3_Infrastructure._2_Persistence;
 using WebApiTest._3_Infrastructure;
 namespace WebApiTest._2_Core.Customers._3_Domain;
 
@@ -15,22 +16,27 @@ public sealed class CustomerUt {
    private readonly string _firstname;
    private readonly string _lastname;
    private readonly string _companyName;
-   private readonly EmailVo _email;
+   private readonly string _subject;
+   private readonly EmailVo _emailVo;
    private readonly string _id;
-   private readonly AddressVo _address1 = default!;
+   private readonly AddressVo _addressVo = default!;
 
    public CustomerUt() {
-      _seed = new TestSeed();
+      _seed = new TestSeed(
+         new Seed(
+            new FakeClock()
+         )
+      );
       _clock = _seed.Clock;
-
       
       _id = "11111111-0000-0000-0000-000000000000";
       _Id = Guid.Parse(_id);
       _firstname = "Bernd";
       _lastname = "Rogalla";
       _companyName = "BR Software GmbH";
-      _email = EmailVo.Create("b.rogalla@mail.local").Value;
-      _address1 = _seed.Address1;
+      _subject = "system";
+      _emailVo = EmailVo.Create("b.rogalla@mail.local").Value;
+      _addressVo = _seed.Address1;
    }
 
    public static IEnumerable<object[]> InvalidLengths() {
@@ -46,7 +52,8 @@ public sealed class CustomerUt {
          firstname: _firstname,
          lastname: _lastname,
          companyName: null,
-         email: _email,
+         emailVo: _emailVo,
+         subject: _subject,
          id: _id,
          createdAt: _clock.UtcNow
       );
@@ -59,7 +66,7 @@ public sealed class CustomerUt {
       Equal(Guid.Parse(_id), customer.Id);
       Equal(_firstname, customer.Firstname);
       Equal(_lastname, customer.Lastname);
-      Equal(_email, customer.Email);
+      Equal(_emailVo, customer.EmailVo);
 
       Null(customer.CompanyName);
    }
@@ -71,7 +78,8 @@ public sealed class CustomerUt {
          firstname: _firstname,
          lastname: _lastname,
          companyName: null,
-         email: _email,
+         subject: _subject,
+         emailVo: _emailVo,
          id: null, // <== without id
          createdAt: _clock.UtcNow
       );
@@ -84,7 +92,7 @@ public sealed class CustomerUt {
       NotEqual(Guid.Empty, customer.Id);
       Equal(_firstname, customer.Firstname);
       Equal(_lastname, customer.Lastname);
-      Equal(_email, customer.Email);
+      Equal(_emailVo, customer.EmailVo);
       Null(customer.CompanyName);
    }
 
@@ -97,7 +105,8 @@ public sealed class CustomerUt {
          firstname: firstname,
          lastname: _lastname,
          companyName: null,
-         email: _email,
+         subject: _subject,
+         emailVo: _emailVo,
          id: _id,
          createdAt: _clock.UtcNow
       );
@@ -114,7 +123,8 @@ public sealed class CustomerUt {
          firstname: firstname,
          lastname: _lastname,
          companyName: null,
-         email: _email,
+         subject: _subject,
+         emailVo: _emailVo,
          id: _id,
          createdAt: _clock.UtcNow
       );
@@ -132,7 +142,8 @@ public sealed class CustomerUt {
          firstname: _firstname,
          lastname: lastname,
          companyName: null,
-         email: _email,
+         subject: _subject,
+         emailVo: _emailVo,
          id: _id,
          createdAt: _clock.UtcNow
       );
@@ -149,7 +160,8 @@ public sealed class CustomerUt {
          firstname: _firstname,
          lastname: lastname,
          companyName: null,
-         email: _email,
+         subject: _subject,
+         emailVo: _emailVo,
          id: _id,
          createdAt: _clock.UtcNow
       );
@@ -182,7 +194,8 @@ public sealed class CustomerUt {
          firstname: _firstname,
          lastname: _lastname,
          companyName: null,
-         email: _email,
+         subject: _subject,
+         emailVo: _emailVo,
          id: id,
          createdAt: _clock.UtcNow
       );
@@ -202,7 +215,8 @@ public sealed class CustomerUt {
          firstname: _firstname,
          lastname: _lastname,
          companyName: null,
-         email: _email,
+         subject: _subject,
+         emailVo: _emailVo,
          id: id,
          createdAt: _clock.UtcNow
       );
@@ -221,11 +235,12 @@ public sealed class CustomerUt {
       var result = Customer.Create(
          firstname: _firstname,
          lastname: _lastname,
-         companyName: null,
-         email: _email,
+         companyName: null,         
+         subject: _subject,
+         emailVo: _emailVo,
          id: _id,
          createdAt: _clock.UtcNow,
-         address: _address1
+         addressVo: _addressVo
       );
 
       // Assert
@@ -233,11 +248,11 @@ public sealed class CustomerUt {
 
       var customer = result.Value!;
       Equal(Guid.Parse(_id), customer.Id);
-      NotNull(customer.Address);
-      Equal(_address1.Street, customer.Address!.Street);
-      Equal(_address1.PostalCode, customer.Address!.PostalCode);
-      Equal(_address1.City, customer.Address!.City);
-      Equal(_address1.Country, customer.Address!.Country);
+      NotNull(customer.AddressVo);
+      Equal(_addressVo.Street, customer.AddressVo!.Street);
+      Equal(_addressVo.PostalCode, customer.AddressVo!.PostalCode);
+      Equal(_addressVo.City, customer.AddressVo!.City);
+      Equal(_addressVo.Country, customer.AddressVo!.Country);
    }
 
    [Theory]
@@ -248,9 +263,9 @@ public sealed class CustomerUt {
       // Act      
       var ResultAddress = AddressVo.Create(
          street: street,
-         postalCode: _address1.PostalCode,
-         city: _address1.City,
-         country: _address1.Country
+         postalCode: _addressVo.PostalCode,
+         city: _addressVo.City,
+         country: _addressVo.Country
       );
       
       // Assert
@@ -270,10 +285,10 @@ public sealed class CustomerUt {
    public void CreateCustomer_with_address_invalid_postal_code_fails(string postalCode) {
       // Act      
       var ResultAddress = AddressVo.Create(
-         street: _address1.Street,
+         street: _addressVo.Street,
          postalCode: postalCode,
-         city: _address1.City,
-         country: _address1.Country
+         city: _addressVo.City,
+         country: _addressVo.Country
       );
       
       // Assert
@@ -292,10 +307,10 @@ public sealed class CustomerUt {
    public void CreateCustomer_with_address_invalid_city_fails(string city) {
       // Act      
       var ResultAddress = AddressVo.Create(
-         street: _address1.Street,
-         postalCode: _address1.PostalCode,
+         street: _addressVo.Street,
+         postalCode: _addressVo.PostalCode,
          city: city,
-         country: _address1.Country
+         country: _addressVo.Country
       );
       
       // Assert
@@ -315,7 +330,8 @@ public sealed class CustomerUt {
          firstname: _firstname,
          lastname: _lastname,
          companyName: _companyName,
-         email: _email,
+         subject: _subject,
+         emailVo: _emailVo,
          id: null,
          createdAt: _clock.UtcNow
       );
@@ -327,7 +343,7 @@ public sealed class CustomerUt {
       Equal(_firstname, customer.Firstname);
       Equal(_lastname, customer.Lastname);
       Equal(_companyName, customer.CompanyName);
-      Equal(_email, customer.Email);
+      Equal(_emailVo, customer.EmailVo);
    }
 
    [Theory]
@@ -338,7 +354,8 @@ public sealed class CustomerUt {
          firstname: firstname,
          lastname: _lastname,
          companyName: _companyName,
-         email: _email,
+         subject: _subject,
+         emailVo: _emailVo,
          id: null,
          createdAt: _clock.UtcNow
       );
@@ -355,7 +372,8 @@ public sealed class CustomerUt {
          firstname: _firstname,
          lastname: lastname,
          companyName: _companyName,
-         email: _email,
+         subject: _subject,
+         emailVo: _emailVo,
          id: null,
          createdAt: _clock.UtcNow
       );
@@ -371,7 +389,8 @@ public sealed class CustomerUt {
          firstname: _firstname,
          lastname: _lastname,
          companyName: companyName,
-         email: _email,
+         subject: _subject,
+         emailVo: _emailVo,
          id: null,
          createdAt: _clock.UtcNow
       );
@@ -398,11 +417,11 @@ public sealed class CustomerUt {
       var id = "22222222-2222-2222-2222-222222222222";
 
       var result = Customer.Create(
-
          firstname: _firstname,
          lastname: _lastname,
          companyName: _companyName,
-         email: _email,
+         subject: _subject,
+         emailVo: _emailVo,
          id: id,
          createdAt: _clock.UtcNow
       );
@@ -419,7 +438,8 @@ public sealed class CustomerUt {
          firstname: _firstname,
          lastname: _lastname,
          companyName: _companyName,
-         email: _email,
+         subject: _subject,
+         emailVo: _emailVo,
          id: id,
          createdAt: _clock.UtcNow
       );
