@@ -7,7 +7,7 @@ using WebApiTest._3_Infrastructure._2_Persistence;
 
 namespace WebApiTest;
 
-public sealed class TestCompositionRoot : IAsyncLifetime, IAsyncDisposable {
+public sealed class TestCompositionRoot : IAsyncLifetime {
    // Enable logging locally, disable in CI
    private static readonly bool EnableLogging =
 #if DEBUG
@@ -28,7 +28,7 @@ public sealed class TestCompositionRoot : IAsyncLifetime, IAsyncDisposable {
    // Default DI container used by most tests
    public ServiceProvider DefaultProvider { get; private set; } = default!;
 
-   public async Task InitializeAsync() {
+   public async ValueTask InitializeAsync() {
       // Create test database
       var (dbPath, dbConnection, dbContext) = await TestDatabase.CreateAsync(
          mode: DbMode.FileUnique,
@@ -136,7 +136,7 @@ public sealed class TestCompositionRoot : IAsyncLifetime, IAsyncDisposable {
       services.AddScoped<TService, TImplementation>();
    }
 
-   public async Task DisposeAsync() {
+   public async ValueTask DisposeAsync() {
       if (DefaultProvider is not null)
          await DefaultProvider.DisposeAsync();
 
@@ -148,8 +148,6 @@ public sealed class TestCompositionRoot : IAsyncLifetime, IAsyncDisposable {
          deleteDatabaseFile: false
       );
    }
-
-   async ValueTask IAsyncDisposable.DisposeAsync() => await DisposeAsync();
 }
 
 /*

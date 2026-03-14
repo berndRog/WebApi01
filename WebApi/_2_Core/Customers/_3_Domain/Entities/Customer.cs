@@ -173,11 +173,11 @@ public class Customer : AggregateRoot {
    
    // Customer updates their profile
    public Result Update(
-      string? lastname,
-      string? companyName,
-      EmailVo? emailVo,
-      AddressVo? addressVo,
-      DateTimeOffset updatedAt
+      string? lastname = null,
+      string? companyName = null,
+      EmailVo? emailVo = null,
+      AddressVo? addressVo = null,
+      DateTimeOffset updatedAt = default!
    ) {
       if (updatedAt == default)
          return Result.Failure(CommonErrors.TimestampIsRequired);

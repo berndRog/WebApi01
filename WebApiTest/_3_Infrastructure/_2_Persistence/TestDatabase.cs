@@ -1,23 +1,19 @@
 using System.Data.Common;
+using System.Reflection;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using WebApi._3_Infrastructure._2_Persistence.Database;
 namespace WebApiTest._3_Infrastructure._2_Persistence;
 
-/// <summary>
-/// Test database helper for Integration Tests.
-/// Creates a SQLite database either in-memory or as a file on disk.
-/// The file-based modes are designed to work well with Rider's Database Viewer
-/// so students can inspect tables/views while debugging.
-/// </summary>
+// Test database helper for Integration Tests.
+// Creates a SQLite database either in-memory or as a file on disk.
+// The file-based modes are designed to work well with Rider's Database Viewer
+// so students can inspect tables/views while debugging.
 public static class TestDatabase {
-   
-   /// <summary>
-   /// Creates and initializes a test database and returns:
-   /// - dbPath: file path (empty string for in-memory)
-   /// - dbConnection: open SQLite connection (must stay open for InMemory)
-   /// - dbContext: a context instance created with that connection (for migrations / seeding)
-   /// </summary>
+   // Creates and initializes a test database and returns:
+   // - dbPath: file path (empty string for in-memory)
+   // - dbConnection: open SQLite connection (must stay open for InMemory)
+   // - dbContext: a context instance created with that connection (for migrations / seeding)
    public static async Task<(string dbPath, DbConnection dbConnection, DbContext dbContext)> CreateAsync(
       DbMode mode = DbMode.FilePersistent,
       string databaseName = "WebApiApiTest",
@@ -62,10 +58,8 @@ public static class TestDatabase {
       }
    }
 
-   /// <summary>
-   /// Disposes the given resources and optionally deletes the file-based database.
-   /// For teaching, you often want deleteDatabaseFile=false so students can inspect the final state in Rider.
-   /// </summary>
+   // Disposes the given resources and optionally deletes the file-based database.
+   // For teaching, you often want deleteDatabaseFile=false so students can inspect the final state in Rider.
    public static async Task DisposeAsync(
       DbMode mode,
       string? dbPath,
@@ -91,10 +85,8 @@ public static class TestDatabase {
          DeleteDatabaseFiles(dbPath!);
    }
 
-   // ---------------------------
    // Internal helpers
    // ---------------------------
-
    private static async Task<(string dbPath, DbConnection dbConnection, DbContext dbContext)> CreateInMemoryAsync(
       bool applyMigrations,
       bool enableSensitiveDataLogging,
@@ -117,7 +109,7 @@ public static class TestDatabase {
          await dbContext.Database.MigrateAsync(ct);
       else
          await dbContext.Database.EnsureCreatedAsync(ct);
-      
+
       return (string.Empty, connection, dbContext);
    }
 
@@ -154,7 +146,6 @@ public static class TestDatabase {
       else
          await dbContext.Database.EnsureCreatedAsync(ct);
 
-      
       var applied = await dbContext.Database.GetAppliedMigrationsAsync(ct);
       Console.WriteLine("---> Applied migrations:");
       foreach (var m in applied)
@@ -168,7 +159,6 @@ public static class TestDatabase {
       while (await reader.ReadAsync(ct))
          Console.WriteLine($"     {reader.GetString(0)}");
 
-      
       return (dbPath, connection, dbContext);
    }
 
@@ -213,67 +203,39 @@ public static class TestDatabase {
       }
    }
 
-   // private static string FindTestProjectRoot() {
-   //    var dir = new DirectoryInfo(AppContext.BaseDirectory);
-   //
-   //    while (dir is not null) {
-   //       // Marker files that exist in YOUR test project root (see screenshot)
-   //       if (File.Exists(Path.Combine(dir.FullName, "BankingApiTest.csproj")) ||
-   //           File.Exists(Path.Combine(dir.FullName, "appsettingsTest.json")))
-   //          return dir.FullName;
-   //
-   //       dir = dir.Parent;
-   //    }
-   //
-   //    throw new InvalidOperationException("Could not locate test project root.");
-   //}
-
-   private static string FindTestProjectRoot()
-   {
+   private static string FindTestProjectRoot() {
       // We want the test PROJECT directory (where the .csproj lives),
       // not the runner working directory (bin/Debug/...).
       //
       // Usually the executing assembly name equals the test project name:
       // e.g. BankingApiTest.dll -> BankingApiTest.csproj
       var projectName =
-         System.Reflection.Assembly.GetExecutingAssembly().GetName().Name
+         Assembly.GetExecutingAssembly().GetName().Name
          ?? throw new InvalidOperationException("Could not determine test project name.");
-   
+
       // Start from the test runner base dir (bin/Debug/...) and walk up until we find the csproj.
       var dir = new DirectoryInfo(AppContext.BaseDirectory);
-   
-      while (dir is not null)
-      {
+
+      while (dir is not null) {
          if (dir.GetFiles($"{projectName}.csproj").Any())
             return dir.FullName;
-   
+
          dir = dir.Parent;
       }
-   
+
       throw new InvalidOperationException($"Could not find test project root for '{projectName}'.");
    }
 }
 
-/// <summary>
-/// Controls how the SQLite database is created.
-/// </summary>
+// Controls how the SQLite database is created.
 public enum DbMode {
-   /// <summary>
-   /// SQLite in-memory database. Requires an open connection for the whole test lifetime.
-   /// NOT suitable for Rider DB Viewer (no file to open).
-   /// </summary>
+   // SQLite in-memory database. Requires an open connection for the whole test lifetime.
    InMemory,
-
-   /// <summary>
-   /// One stable file path, reused between runs (file is deleted/recreated on CreateAsync).
-   /// Best for teaching: Rider can keep a stable DataSource.
-   /// </summary>
+   
+   // One stable file path, reused between runs (file is deleted/recreated on CreateAsync).
    FilePersistent,
 
-   /// <summary>
-   /// Creates a unique file name per run (timestamped).
-   /// Good for CI / parallel runs; not ideal for teaching because the file changes every run.
-   /// </summary>
+   // Creates a unique file name per run (timestamped).
    FileUnique
 }
 

@@ -9,12 +9,12 @@ public interface ICustomerRepository {
 
    // Load a customer aggregate by its identifier
    Task<Customer?> FindByIdAsync(
-      Guid customerId,
+      Guid id,
       CancellationToken ct = default
    );
 
    // Load a customer using the identity subject (IdP reference)
-   Task<Customer?> FindByIdentitySubjectAsync(
+   Task<Customer?> FindBySubjectAsync(
       string subject,
       CancellationToken ct = default
    );
@@ -26,14 +26,14 @@ public interface ICustomerRepository {
    );
 
    // Load all customers with SQL like displayName
-   Task<IEnumerable<Customer>> SelectByDisplayNameAsync(
+   Task<IEnumerable<Customer>> SelectByNameAsync(
       string displayName,
       CancellationToken ct = default
    );
    
    // Check if the customer exists and is currently active
    Task<bool> ExistsActiveAsync(
-      Guid customerId,
+      Guid id,
       CancellationToken ct = default
    );
 

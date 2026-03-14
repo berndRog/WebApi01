@@ -10,14 +10,14 @@ internal class CustomerRepositoryEf(
    ICustomerDbContext customerDbContext
 ) : ICustomerRepository {
    public async Task<Customer?> FindByIdAsync(
-      Guid customerId,
+      Guid id,
       CancellationToken ct
    ) {
       return await customerDbContext.Customers
-         .FirstOrDefaultAsync(o => o.Id == customerId, ct);
+         .FirstOrDefaultAsync(o => o.Id == id, ct);
    }
 
-   public Task<Customer?> FindByIdentitySubjectAsync(
+   public Task<Customer?> FindBySubjectAsync(
       string subject,
       CancellationToken ct = default
    ) {
@@ -32,7 +32,7 @@ internal class CustomerRepositoryEf(
          .SingleOrDefaultAsync(c => c.EmailVo == email, ct);
    }
 
-   public async Task<IEnumerable<Customer>> SelectByDisplayNameAsync(
+   public async Task<IEnumerable<Customer>> SelectByNameAsync(
       string displayName,
       CancellationToken ct = default
    ) {
@@ -46,12 +46,12 @@ internal class CustomerRepositoryEf(
    }
 
    public async Task<bool> ExistsActiveAsync(
-      Guid customerId,
+      Guid id,
       CancellationToken ct = default
    ) {
       return await customerDbContext.Customers
             .AsTracking()
-            .FirstOrDefaultAsync(o => o.Id == customerId, ct)
+            .FirstOrDefaultAsync(o => o.Id == id, ct)
          is { IsActive: true };
    }
 
