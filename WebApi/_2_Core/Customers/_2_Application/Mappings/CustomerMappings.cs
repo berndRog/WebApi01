@@ -4,12 +4,36 @@ using WebApi._2_Core.Customers._3_Domain.Entities;
 namespace WebApi._2_Core.Customers._2_Application.Mappings;
 
 public static class CustomerMappings {
+
    public static CustomerDto ToCustomerDto(this Customer customer) => new(
+      Id:          customer.Id,
+      Firstname:   customer.Firstname,
+      Lastname:    customer.Lastname,
+      CompanyName: customer.CompanyName,
+      StatusInt: (int) customer.Status,
+      Email: customer.EmailVo.Value,
+      AddressDto: customer.AddressVo.ToAddressDto()
+   );
+   
+   public static CustomerProvisionDto ToCustomerProvisionDto(this Customer customer, bool wasCreated) => new(
+      Id: customer.Id,
+      WasCreated: wasCreated
+   );
+
+   public static CustomerDetailsDto ToCustomerDetailsDto(this Customer customer) => new(
       Id: customer.Id,
       Firstname: customer.Firstname,
       Lastname: customer.Lastname,
       CompanyName: customer.CompanyName,
-      EmailString: customer.EmailVo.Value,
-      AddressDto: customer.AddressVo?.ToAddressDto()
+      StatusInt: (int)customer.Status,
+      ActivatedAt: customer.ActivatedAt?.ToString("O"),
+      RejectedAt: customer.RejectedAt?.ToString("O"),
+      RejectCodeInt: (int)customer.RejectCode,
+      AuditedByEmployeeId: customer.AuditedByEmployeeId,
+      DeactivatedAt: customer.DeactivatedAt?.ToString("O"),
+      DeactivatedByEmployeeId: customer.DeactivatedByEmployeeId,
+      Email: customer.EmailVo.Value,
+      AddressVo: customer.AddressVo
    );
+
 }

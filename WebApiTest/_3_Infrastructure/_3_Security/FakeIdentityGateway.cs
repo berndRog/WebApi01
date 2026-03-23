@@ -1,4 +1,4 @@
-using WebApi._2_Core.Customers._1_Ports.Outbound;
+using WebApi._2_Core.BuildingBlocks._1_Ports.Outbound;
 namespace WebApiTest._3_Infrastructure._3_Security;
 
 public sealed class FakeIdentityGateway : IIdentityGateway {

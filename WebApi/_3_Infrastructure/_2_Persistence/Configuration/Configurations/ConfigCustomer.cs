@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using WebApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
 using WebApi._2_Core.Customers._3_Domain.Entities;
-using WebApi._3_Infrastructure._2_Persistence.Converters;
 using WebApi._3_Infrastructure._2_Persistence.Database.Converter;
 namespace WebApi._3_Infrastructure._2_Persistence.Configuration.Configurations;
 
@@ -12,16 +12,14 @@ public sealed class ConfigCustomer(
 
    public void Configure(EntityTypeBuilder<Customer> builder) {
       
-      
+      // Tablename
       builder.ToTable("Customers");
 
-      // Key + concurrency
-      // -----------------------------
+      // Primary Key will never be generated
       builder.HasKey(o => o.Id);
       builder.Property(o => o.Id).ValueGeneratedNever();
       
       // Auditing timestamps
-      // -----------------------------
       builder.Property(o => o.CreatedAt)
          .HasConversion(dtConv)
          .IsRequired();
@@ -29,12 +27,7 @@ public sealed class ConfigCustomer(
       builder.Property(o => o.UpdatedAt)
          .HasConversion(dtConv)
          .IsRequired();
-
-      // Domain-only
-      builder.Ignore(o => o.DisplayName);
-      builder.Ignore(o => o.IsActive);
-      builder.Ignore(o => o.IsProfileComplete);
-
+      
       // Profile data
       builder.Property(o => o.Firstname)
          .HasMaxLength(80)
@@ -46,13 +39,6 @@ public sealed class ConfigCustomer(
          .HasMaxLength(80)
          .IsRequired(false);
 
-      // Email-VO als Property mapped via Extension
-      builder.Property(x => x.EmailVo)
-         .HasEmailConversion()
-         .IsRequired();
-      // optional: unique index
-      builder.HasIndex(x => x.EmailVo).IsUnique();;
-
       builder.Property(o => o.Subject)
          .HasMaxLength(200)
          .IsRequired();
@@ -60,7 +46,7 @@ public sealed class ConfigCustomer(
 
       // Status
       builder.Property(o => o.Status)
-         .HasConversion<int>()   // or .HasConversion<string>()
+         .HasConversion<int>()   
          .IsRequired();
 
       // Employee decisions / audit facts
@@ -72,9 +58,9 @@ public sealed class ConfigCustomer(
          .HasConversion(dtConvNul)
          .IsRequired(false);
 
-      builder.Property(o => o.RejectionReason)
-         .HasMaxLength(100)
-         .IsRequired(false);
+      builder.Property(o => o.RejectCode)
+         .HasConversion<int>()   
+         .IsRequired();
 
       builder.Property(o => o.AuditedByEmployeeId)
          .IsRequired(false);
@@ -86,29 +72,44 @@ public sealed class ConfigCustomer(
       builder.Property(o => o.DeactivatedByEmployeeId)
          .IsRequired(false);
 
+      // Domain-only
+      builder.Ignore(o => o.DisplayName);
+      builder.Ignore(o => o.IsActive);
+      builder.Ignore(o => o.IsProfileComplete);
+      
+      builder.Property(c => c.EmailVo)
+         .HasConversion(vo => vo.Value, s => EmailVo.FromPersisted(s))
+         .IsRequired()
+         .HasColumnName("Email") // Die Spalte heißt "Email"
+         .HasMaxLength(254);
+      builder.HasIndex(c => c.EmailVo).IsUnique();
+      
       // Address (owned value object)
       builder.OwnsOne(o => o.AddressVo, a => {
+         
          a.Property(p => p.Street)
             .HasMaxLength(80)
             .HasColumnName("Street")
-            .IsRequired(false);
+            .IsRequired();
+
          a.Property(p => p.PostalCode)
             .HasMaxLength(20)
             .HasColumnName("PostalCode")
-            .IsRequired(false);
+            .IsRequired();
+
          a.Property(p => p.City)
             .HasMaxLength(80)
             .HasColumnName("City")
-            .IsRequired(false);
+            .IsRequired();
+
          a.Property(p => p.Country)
             .HasMaxLength(80)
             .HasColumnName("Country")
             .IsRequired(false);
       });
-      builder.Navigation(o => o.AddressVo).IsRequired(false);
+      builder.Navigation(o => o.AddressVo).IsRequired();
 
       // Optional indexes for admin filtering
-      builder.HasIndex(o => o.Status);
       builder.HasIndex(o => o.CreatedAt);
    }
 }

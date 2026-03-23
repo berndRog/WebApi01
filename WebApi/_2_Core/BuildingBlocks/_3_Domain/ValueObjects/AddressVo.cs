@@ -1,22 +1,17 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using WebApi._2_Core.BuildingBlocks._3_Domain.Errors;
 namespace WebApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
 
-public sealed record AddressAlt(
-   string Street,
-   string PostalCode,
-   string City,       
-   string? Country = null 
-);
-
 // Address is a value object without identity.
 // It is immutable and fully replaced on change.
+[ComplexType]
 public sealed record AddressVo {
    
    // Properties
-   public string Street     { get; init; } = string.Empty;
-   public string PostalCode { get; init; } = string.Empty;
-   public string City       { get; init; } = string.Empty;
-   public string? Country   { get; init; } 
+   public string Street     { get; private init; } = string.Empty;
+   public string PostalCode { get; private init; } = string.Empty;
+   public string City       { get; private init; } = string.Empty;
+   public string? Country   { get; private init; } 
    
    // private Ctor
    private AddressVo(

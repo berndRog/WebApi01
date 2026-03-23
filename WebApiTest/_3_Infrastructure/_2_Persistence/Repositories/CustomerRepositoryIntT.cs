@@ -1,3 +1,4 @@
+using BankingApiTest.TestInfrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using WebApi._2_Core.BuildingBlocks._1_Ports.Outbound;
@@ -6,6 +7,7 @@ using WebApi._2_Core.Customers._1_Ports.Outbound;
 using WebApi._2_Core.Customers._3_Domain.Entities;
 using WebApi._3_Infrastructure._2_Persistence;
 using WebApi._3_Infrastructure._2_Persistence.Database;
+using WebApiTest.TestInfrastructure;
 namespace WebApiTest._3_Infrastructure._2_Persistence.Repositories;
 
 public sealed class CustomerRepositoryIntT : IClassFixture<TestCompositionRoot>, IAsyncLifetime {
@@ -209,6 +211,7 @@ public sealed class CustomerRepositoryIntT : IClassFixture<TestCompositionRoot>,
       var customerToUpdate = customerUpdate!;
       customerToUpdate.Update(
          lastname: "Meier",
+         companyName: null,
          emailVo: EmailVo.Create("e.meier@gmx.de").GetValueOrThrow(),
          addressVo: AddressVo.Create(
             street: "Allertalweg. 2",

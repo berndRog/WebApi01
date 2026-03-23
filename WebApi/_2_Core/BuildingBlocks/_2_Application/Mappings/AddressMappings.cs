@@ -9,4 +9,17 @@ public static class AddressMappings {
       City: address.City,
       Country: address.Country
    );
+   
+   public static AddressVo ToAddressVo(this AddressDto addressDto) {
+      
+      var result = AddressVo.Create(
+         street: addressDto.Street,
+         postalCode: addressDto.PostalCode,
+         city: addressDto.City,
+         country: addressDto.Country
+      );
+      if(result.IsFailure)
+         throw new InvalidOperationException($"Invalid address data: {result.Error}");
+      return result.Value;
+   }
 }

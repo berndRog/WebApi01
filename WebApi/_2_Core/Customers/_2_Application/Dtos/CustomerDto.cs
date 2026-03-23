@@ -1,4 +1,5 @@
 using WebApi._2_Core.BuildingBlocks._2_Application.Dtos;
+using WebApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
 namespace WebApi._2_Core.Customers._2_Application.Dtos;
 
 public sealed record CustomerDto(
@@ -6,6 +7,7 @@ public sealed record CustomerDto(
    string Firstname,
    string Lastname,
    string? CompanyName,
-   string EmailString, 
-   AddressDto? AddressDto
+   int StatusInt,            // "Pending = 0 | Active = 1 | Rejected ? 2 | Deactivated = 3"
+   string Email,
+   AddressDto AddressDto
 );

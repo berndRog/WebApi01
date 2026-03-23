@@ -1,6 +1,8 @@
 using WebApi._2_Core.BuildingBlocks._1_Ports.Outbound;
 using WebApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
+using WebApi._2_Core.Customers;
 using WebApi._2_Core.Customers._3_Domain.Entities;
+using WebApi._3_Infrastructure;
 namespace WebApi;
 
 public class Program {
@@ -8,14 +10,11 @@ public class Program {
    public static void Main(string[] args) {
       
       var builder = WebApplication.CreateBuilder(args);
-
-
       Console.WriteLine("Hier ist die API");
+      
       // Add services to the container.
-
-      // builder.Services.AddControllers();
-      // // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-      // builder.Services.AddOpenApi();
+      builder.Services.AddCustomerModules();
+      builder.Services.AddInfrastructureModules(builder.Configuration);
       
       var app = builder.Build();
 
@@ -69,17 +68,17 @@ public class Program {
 
 
       // Value Objects (VO)
-      var adr1 = new AddressAlt("Hauptstrasse 1", "Braunschweig", "38100");
-      var adr2 = new AddressAlt("Hauptstrasse 1", "Braunschweig", "38100");
-      var adr3 = adr1;
-      
-      Console.WriteLine("\nValue Objects Equal");
-      Console.WriteLine($"\nadr1 == adr2: {adr1 == adr2}");
-      Console.WriteLine($"adr1.Equals(adr2): {adr1.Equals(adr2)}");
-      
-      Console.WriteLine($"\nadr1 == adr3: {adr1 == adr3}");
-      Console.WriteLine($"adr1.Equals(adr3): {adr1.Equals(adr3)}");
-      
+      // var adr1 = new AddressAlt("Hauptstrasse 1", "Braunschweig", "38100");
+      // var adr2 = new AddressAlt("Hauptstrasse 1", "Braunschweig", "38100");
+      // var adr3 = adr1;
+      //
+      // Console.WriteLine("\nValue Objects Equal");
+      // Console.WriteLine($"\nadr1 == adr2: {adr1 == adr2}");
+      // Console.WriteLine($"adr1.Equals(adr2): {adr1.Equals(adr2)}");
+      //
+      // Console.WriteLine($"\nadr1 == adr3: {adr1 == adr3}");
+      // Console.WriteLine($"adr1.Equals(adr3): {adr1.Equals(adr3)}");
+      //
       
       var customer2 = Customer2.Create(firstname, lastname, null, email);
       Console.WriteLine("\nCustomer2");

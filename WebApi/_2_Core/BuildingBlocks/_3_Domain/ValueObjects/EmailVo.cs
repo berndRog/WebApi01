@@ -1,23 +1,31 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Net.Mail;
 using WebApi._2_Core.BuildingBlocks._3_Domain.Errors;
 namespace WebApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
 
 // Email value object.
+// Canonical stored representation.
+//    Max.Mustermann@Example.COM   " -> "max.mustermann@example.com"
+
+[ComplexType]
 public sealed record EmailVo {
-   // Canonical stored representation.
-   // Example: "  Max.Mustermann@Example.COM   " -> "max.mustermann@example.com"
-   public string Value { get; }
-
-   // Private constructor enforces factory usage.
+   // workaround for EF Core: init-only property with default value from primary ctor parameter
+   public string Value { get; init; } 
+   
+   // EF Core ctor 
+   private EmailVo() => Value = default!;
+   
+   // Domain ctor
    private EmailVo(string value) => Value = value;
-
+   
    //--- Factory - user input---------------------------------------------------
    // Creates an Email from user input.
    public static Result<EmailVo> Create(string? input) {
-      var normalized = NormalizeFromInput(input);
-      if (normalized.IsFailure)
-         return Result<EmailVo>.Failure(normalized.Error);
-      return Result<EmailVo>.Success(new EmailVo(normalized.Value!));
+      var resultNormalized = NormalizeFromInput(input);
+      if (resultNormalized.IsFailure)
+         return Result<EmailVo>.Failure(resultNormalized.Error);
+      
+      return Result<EmailVo>.Success(new EmailVo(resultNormalized.Value!));
    }
 
    //--- Factory - database (trusted) -----------------------------------------

@@ -6,7 +6,7 @@ using WebApi._3_Infrastructure._2_Persistence.Database.Converter;
 [assembly: InternalsVisibleTo("WebApiTest")]
 namespace WebApi._3_Infrastructure._2_Persistence.Database;
 
-internal sealed partial class WebDbContext(
+public sealed partial class WebDbContext(
    DbContextOptions<WebDbContext> options
 ) : DbContext(options) {
    public DbSet<Customer> Customers => Set<Customer>();

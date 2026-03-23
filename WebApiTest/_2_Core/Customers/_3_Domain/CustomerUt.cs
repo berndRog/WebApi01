@@ -5,6 +5,8 @@ using WebApi._2_Core.Customers._3_Domain.Entities;
 using WebApi._2_Core.Customers._3_Domain.Errors;
 using WebApi._3_Infrastructure._2_Persistence;
 using WebApiTest._3_Infrastructure;
+using WebApiTest._3_Infrastructure._5_Utils;
+using WebApiTest.TestInfrastructure;
 namespace WebApiTest._2_Core.Customers._3_Domain;
 
 public sealed class CustomerUt {
@@ -22,11 +24,7 @@ public sealed class CustomerUt {
    private readonly AddressVo _addressVo = default!;
 
    public CustomerUt() {
-      _seed = new TestSeed(
-         new Seed(
-            new FakeClock()
-         )
-      );
+      _seed = new TestSeed();
       _clock = _seed.Clock;
       
       _id = "11111111-0000-0000-0000-000000000000";
@@ -53,6 +51,7 @@ public sealed class CustomerUt {
          lastname: _lastname,
          companyName: null,
          emailVo: _emailVo,
+         addressVo: _addressVo,
          subject: _subject,
          id: _id,
          createdAt: _clock.UtcNow
@@ -80,6 +79,7 @@ public sealed class CustomerUt {
          companyName: null,
          subject: _subject,
          emailVo: _emailVo,
+         addressVo: _addressVo,
          id: null, // <== without id
          createdAt: _clock.UtcNow
       );
@@ -107,6 +107,7 @@ public sealed class CustomerUt {
          companyName: null,
          subject: _subject,
          emailVo: _emailVo,
+         addressVo: _addressVo,
          id: _id,
          createdAt: _clock.UtcNow
       );
@@ -125,6 +126,7 @@ public sealed class CustomerUt {
          companyName: null,
          subject: _subject,
          emailVo: _emailVo,
+         addressVo: _addressVo,
          id: _id,
          createdAt: _clock.UtcNow
       );
@@ -144,6 +146,7 @@ public sealed class CustomerUt {
          companyName: null,
          subject: _subject,
          emailVo: _emailVo,
+         addressVo: _addressVo,
          id: _id,
          createdAt: _clock.UtcNow
       );
@@ -162,6 +165,7 @@ public sealed class CustomerUt {
          companyName: null,
          subject: _subject,
          emailVo: _emailVo,
+         addressVo: _addressVo,
          id: _id,
          createdAt: _clock.UtcNow
       );
@@ -196,6 +200,7 @@ public sealed class CustomerUt {
          companyName: null,
          subject: _subject,
          emailVo: _emailVo,
+         addressVo: _addressVo,
          id: id,
          createdAt: _clock.UtcNow
       );
@@ -217,6 +222,7 @@ public sealed class CustomerUt {
          companyName: null,
          subject: _subject,
          emailVo: _emailVo,
+         addressVo: _addressVo,
          id: id,
          createdAt: _clock.UtcNow
       );
@@ -225,36 +231,7 @@ public sealed class CustomerUt {
       True(result.IsFailure);
       Equal(CustomerErrors.InvalidId, result.Error);
    }
-
-   #endregion
-
-   #region--- CreateCustomer with Address tests ---------------------------
-   [Fact]
-   public void CreateCustomer_valid_input_and_id_and_address() {
-      // Act
-      var result = Customer.Create(
-         firstname: _firstname,
-         lastname: _lastname,
-         companyName: null,         
-         subject: _subject,
-         emailVo: _emailVo,
-         id: _id,
-         createdAt: _clock.UtcNow,
-         addressVo: _addressVo
-      );
-
-      // Assert
-      True(result.IsSuccess);
-
-      var customer = result.Value!;
-      Equal(Guid.Parse(_id), customer.Id);
-      NotNull(customer.AddressVo);
-      Equal(_addressVo.Street, customer.AddressVo!.Street);
-      Equal(_addressVo.PostalCode, customer.AddressVo!.PostalCode);
-      Equal(_addressVo.City, customer.AddressVo!.City);
-      Equal(_addressVo.Country, customer.AddressVo!.Country);
-   }
-
+   
    [Theory]
    [InlineData("")]
    [InlineData("   ")]
@@ -332,6 +309,7 @@ public sealed class CustomerUt {
          companyName: _companyName,
          subject: _subject,
          emailVo: _emailVo,
+         addressVo: _addressVo,
          id: null,
          createdAt: _clock.UtcNow
       );
@@ -356,6 +334,7 @@ public sealed class CustomerUt {
          companyName: _companyName,
          subject: _subject,
          emailVo: _emailVo,
+         addressVo: _addressVo,
          id: null,
          createdAt: _clock.UtcNow
       );
@@ -374,6 +353,7 @@ public sealed class CustomerUt {
          companyName: _companyName,
          subject: _subject,
          emailVo: _emailVo,
+         addressVo: _addressVo,
          id: null,
          createdAt: _clock.UtcNow
       );
@@ -391,6 +371,7 @@ public sealed class CustomerUt {
          companyName: companyName,
          subject: _subject,
          emailVo: _emailVo,
+         addressVo: _addressVo,
          id: null,
          createdAt: _clock.UtcNow
       );
@@ -422,6 +403,7 @@ public sealed class CustomerUt {
          companyName: _companyName,
          subject: _subject,
          emailVo: _emailVo,
+         addressVo: _addressVo,
          id: id,
          createdAt: _clock.UtcNow
       );
@@ -440,6 +422,7 @@ public sealed class CustomerUt {
          companyName: _companyName,
          subject: _subject,
          emailVo: _emailVo,
+         addressVo: _addressVo,
          id: id,
          createdAt: _clock.UtcNow
       );

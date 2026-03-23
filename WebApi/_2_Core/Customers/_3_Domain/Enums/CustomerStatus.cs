@@ -1,4 +1,4 @@
-namespace WebApi._2_Core.Customers._3_Domain.Enums;
+namespace BankingApi._2_Core.Customers._3_Domain.Enum;
 
 public enum CustomerStatus {
    Pending = 0,     // Registered, identity not yet verified by an employee
