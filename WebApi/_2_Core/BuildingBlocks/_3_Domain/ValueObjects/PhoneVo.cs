@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Text.RegularExpressions;
-using BankingApi._2_Core.BuildingBlocks._3_Domain.Errors;
-namespace BankingApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
+using WebApi._2_Core.BuildingBlocks._3_Domain.Errors;
+namespace WebApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
 
 // Phone number value object.
 //
@@ -45,7 +45,7 @@ public sealed record PhoneVo {
    }
 
    // database 
-   internal static PhoneVo FromPersisted(string value) {
+   public static PhoneVo FromPersisted(string value) {
       if (!IsCanonical(value))
          throw new InvalidOperationException($"Invalid phone in database: '{value}'");
       return new PhoneVo(value);

@@ -34,7 +34,7 @@ public sealed class CustomerUt {
       _companyName = "BR Software GmbH";
       _subject = "system";
       _emailVo = EmailVo.Create("b.rogalla@mail.local").Value;
-      _addressVo = _seed.Address1;
+      _addressVo = _seed.Address1Vo;
    }
 
    public static IEnumerable<object[]> InvalidLengths() {

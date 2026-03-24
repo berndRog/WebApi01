@@ -1,5 +1,4 @@
-using WebApiTest.TestInfrastructure;
-namespace BankingApiTest.TestInfrastructure;
+namespace WebApiTest.TestInfrastructure;
 
 /// <summary>
 /// Base class for integration tests that need a fresh <see cref="TestCompositionRoot"/>

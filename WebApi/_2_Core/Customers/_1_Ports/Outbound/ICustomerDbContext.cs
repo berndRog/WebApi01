@@ -11,7 +11,8 @@ public interface ICustomerDbContext {
 
    // Add a new customer to the persistence context
    void Add(Customer entity);
-
+   void AddRange(IEnumerable<Customer> entities);
+   
    // Mark an existing customer as modified
    void Update(Customer entity);
 }

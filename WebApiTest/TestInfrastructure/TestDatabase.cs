@@ -60,7 +60,7 @@ public static class TestDatabase {
    // Create a BankingDbContext test database
    public static async Task<(string dbPath, DbConnection dbConnection, DbContext dbContext)> CreateAsync(
       DbMode mode = DbMode.FilePersistent,
-      string databaseName = "BankingApiTest",
+      string databaseName = "WebApiTest",
       bool applyMigrations = true,
       bool enableSensitiveDataLogging = true,
       CancellationToken ct = default

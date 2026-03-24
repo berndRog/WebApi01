@@ -39,6 +39,14 @@ public sealed class ConfigCustomer(
          .HasMaxLength(80)
          .IsRequired(false);
 
+      // Value Object EmailVo mit Conversion
+      builder.Property(c => c.EmailVo)
+         .HasConversion(vo => vo.Value, s => EmailVo.FromPersisted(s))
+         .IsRequired()
+         .HasColumnName("Email") 
+         .HasMaxLength(254);
+      builder.HasIndex(c => c.EmailVo).IsUnique();
+
       builder.Property(o => o.Subject)
          .HasMaxLength(200)
          .IsRequired();
@@ -77,13 +85,7 @@ public sealed class ConfigCustomer(
       builder.Ignore(o => o.IsActive);
       builder.Ignore(o => o.IsProfileComplete);
       
-      builder.Property(c => c.EmailVo)
-         .HasConversion(vo => vo.Value, s => EmailVo.FromPersisted(s))
-         .IsRequired()
-         .HasColumnName("Email") // Die Spalte heißt "Email"
-         .HasMaxLength(254);
-      builder.HasIndex(c => c.EmailVo).IsUnique();
-      
+
       // Address (owned value object)
       builder.OwnsOne(o => o.AddressVo, a => {
          

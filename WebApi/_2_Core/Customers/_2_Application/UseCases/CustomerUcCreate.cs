@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using WebApi._2_Core.BuildingBlocks;
 using WebApi._2_Core.BuildingBlocks._1_Ports.Outbound;
 using WebApi._2_Core.BuildingBlocks._3_Domain;
 using WebApi._2_Core.BuildingBlocks._3_Domain.ValueObjects;
@@ -74,8 +75,7 @@ internal sealed class CustomerUcCreate(
       var rows = await unitOfWork.SaveAllChangesAsync("Customer created", ct);
       logger.LogInformation("CustomerUcCreatePerson done customerId={id} savedRows={rows}",
          customer.Id, rows);
-
-     
+      
       return Result<CustomerDto>.Success(customer.ToCustomerDto());
    }
 }

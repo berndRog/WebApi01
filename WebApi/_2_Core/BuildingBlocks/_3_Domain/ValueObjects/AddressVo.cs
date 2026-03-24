@@ -46,7 +46,7 @@ public sealed record AddressVo {
       
       if (string.IsNullOrWhiteSpace(postalCode))
          return Result<AddressVo>.Failure(CommonErrors.PostalCodeIsRequired);
-      if (postalCode.Length is < 2 or > 10)
+      if (postalCode.Length is < 2 or > 20)
          return Result<AddressVo>.Failure(CommonErrors.InvalidPostalCode);
 
       if (string.IsNullOrWhiteSpace(city))

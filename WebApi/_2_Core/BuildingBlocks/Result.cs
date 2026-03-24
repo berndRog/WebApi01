@@ -1,5 +1,5 @@
 using WebApi._2_Core.BuildingBlocks._3_Domain.Errors;
-namespace WebApi._2_Core.BuildingBlocks._3_Domain;
+namespace WebApi._2_Core.BuildingBlocks;
 
 // Generic result type for operations that return a value.
 // 

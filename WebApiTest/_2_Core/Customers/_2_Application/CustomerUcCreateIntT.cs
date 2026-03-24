@@ -1,11 +1,10 @@
-using BankingApiTest.TestInfrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using WebApi._2_Core.BuildingBlocks._1_Ports.Outbound;
 using WebApi._2_Core.Customers._1_Ports.Outbound;
 using WebApi._2_Core.Customers._2_Application.Mappings;
 using WebApi._2_Core.Customers._2_Application.UseCases;
 using WebApiTest.TestInfrastructure;
-namespace WebApiTest._2_Core.Customers.Application;
+namespace WebApiTest._2_Core.Customers._2_Application;
 
 public sealed class CustomerUcCreateIntT : TestBaseIntegration {
    private readonly TestSeed _seed = new();
@@ -16,20 +15,20 @@ public sealed class CustomerUcCreateIntT : TestBaseIntegration {
       
       using var scope = Root.CreateDefaultScope();
       var customerRepository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
-      //var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
+      // var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
       var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
       var sut = scope.ServiceProvider.GetRequiredService<CustomerUcCreate>();
 
       // Arrange
       var customer = _seed.CustomerRegister(); // with address
       var customerDto = customer.ToCustomerDto(); 
-      //var account1 = _seed.Account1(); 
+      // var account1 = _seed.Account1(); 
      
       // Act
       await sut.ExecuteAsync(
          customerDto: customerDto,
-         //accountIdString: account1.Id.ToString(),
-         //ibanString: account1.IbanVo.Value,
+         // accountIdString: account1.Id.ToString(),
+         // ibanString: account1.IbanVo.Value,
          ct
       );
       unitOfWork.ClearChangeTracker();
@@ -44,9 +43,9 @@ public sealed class CustomerUcCreateIntT : TestBaseIntegration {
       Equal(customer.Subject, actualCustomer.Subject);
       Equal(customer.AddressVo, actualCustomer.AddressVo);
       
-      //var actualAccounts = await accountRepository.SelelctByCustomerIdAsync(customer.Id, ct);
-      //NotNull(actualAccounts);
-      //Single(actualAccounts);
+      // var actualAccounts = await accountRepository.SelelctByCustomerIdAsync(customer.Id, ct);
+      // NotNull(actualAccounts);
+      // Single(actualAccounts);
 
    }
 }

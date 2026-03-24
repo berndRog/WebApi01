@@ -1,5 +1,4 @@
 using System.Data.Common;
-using BankingApiTest.TestInfrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using WebApi._3_Infrastructure._2_Persistence.Database;
 namespace WebApiTest.TestInfrastructure;
 
-// Concrete test composition root for BankingDbContext
+// Concrete test composition root for BankingDbContext        T
 public sealed class TestCompositionRoot : TestCompositionRoot<WebDbContext> {
 
    public TestCompositionRoot() {

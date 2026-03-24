@@ -26,7 +26,7 @@ public interface ICustomerRepository {
    );
 
    // Load all customers with SQL like displayName
-   Task<IEnumerable<Customer>> SelectByNameAsync(
+   Task<IReadOnlyCollection<Customer>> SelectByDisplayNameAsync(
       string displayName,
       CancellationToken ct = default
    );
@@ -38,12 +38,13 @@ public interface ICustomerRepository {
    );
 
    // Select all customers
-   Task<IEnumerable<Customer>> SelectAllAsync(
+   Task<IReadOnlyCollection<Customer>> SelectAllAsync(
       CancellationToken ct = default
    );
    
    // Add a new customer aggregate to the repository
    void Add(Customer customer);
+   void AddRange(IEnumerable<Customer> customers);
    
    // Update a customer aggregate in the repository
    void Update(Customer customer);

@@ -5,16 +5,17 @@ using WebApi._2_Core.Customers._3_Domain.Entities;
 namespace WebApi._3_Infrastructure._2_Persistence.Database;
 
 internal sealed class CustomerDbContextEf(
-   WebDbContext dbContext
+   WebDbContext db
 ) : ICustomerDbContext {
    
-   public IQueryable<Customer> Customers => dbContext.Set<Customer>();
+   public IQueryable<Customer> Customers 
+      => db.Set<Customer>();
 
-   public void Add(Customer customer) => dbContext.Customers.Add(customer);
-   public void Update(Customer customer) => dbContext.Customers.Update(customer);
-   
-   // public void Add<T>(T entity) where T : class => dbContext.Set<T>().Add(entity);
-   // public void Update<T>(T entity) where T : class => dbContext.Set<T>().Update(entity);
-   // public void Remove<T>(T entity) where T : class => dbContext.Set<T>().Remove(entity);
+   public void Add(Customer customer) 
+      => db.Set<Customer>().Add(customer);
+   public void AddRange(IEnumerable<Customer> entities) 
+      => db.Set<Customer>().AddRange(entities);
+   public void Update(Customer customer)
+      => db.Set<Customer>().Update(customer);
 }
 

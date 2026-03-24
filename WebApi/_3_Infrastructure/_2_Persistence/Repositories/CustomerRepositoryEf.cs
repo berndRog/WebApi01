@@ -12,10 +12,8 @@ internal class CustomerRepositoryEf(
    public async Task<Customer?> FindByIdAsync(
       Guid id,
       CancellationToken ct
-   ) {
-      return await customerDbContext.Customers
-         .FirstOrDefaultAsync(o => o.Id == id, ct);
-   }
+   ) => await customerDbContext.Customers
+         .SingleOrDefaultAsync(o => o.Id == id, ct);
 
    public Task<Customer?> FindBySubjectAsync(
       string subject,
@@ -27,12 +25,10 @@ internal class CustomerRepositoryEf(
    public async Task<Customer?> FindByEmailAsync(
       EmailVo email,
       CancellationToken ct
-   ) {
-      return await customerDbContext.Customers
-         .SingleOrDefaultAsync(c => c.EmailVo == email, ct);
-   }
+   ) => await customerDbContext.Customers
+      .SingleOrDefaultAsync(c => c.EmailVo == email, ct);
 
-   public async Task<IEnumerable<Customer>> SelectByNameAsync(
+   public async Task<IReadOnlyCollection<Customer>> SelectByDisplayNameAsync(
       string displayName,
       CancellationToken ct = default
    ) {
@@ -40,8 +36,8 @@ internal class CustomerRepositoryEf(
       return await customerDbContext.Customers
          .Where(c =>
             EF.Functions.Like(
-               c.CompanyName ?? c.Firstname + " " + c.Lastname,
-               pattern))
+               c.CompanyName ?? c.Firstname + " " + c.Lastname, pattern)
+         )
          .ToListAsync(ct);
    }
 
@@ -55,18 +51,19 @@ internal class CustomerRepositoryEf(
          is { IsActive: true };
    }
 
-   public async Task<IEnumerable<Customer>> SelectAllAsync(
+   public async Task<IReadOnlyCollection<Customer>> SelectAllAsync(
       CancellationToken ct = default
    ) {
       return await customerDbContext.Customers
          .ToListAsync(ct);
    }
 
-   public void Add(Customer customer) {
-      customerDbContext.Add(customer);
-   }
+   public void Add(Customer customer)
+      => customerDbContext.Add(customer);
 
-   public void Update(Customer customer) {
-      customerDbContext.Update(customer);
-   }
+   public void AddRange(IEnumerable<Customer> customers)
+      => customerDbContext.AddRange(customers);
+
+   public void Update(Customer customer)
+      => customerDbContext.Update(customer);
 }
