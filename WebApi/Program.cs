@@ -14,7 +14,7 @@ public class Program {
       
       // Add services to the container.
       builder.Services.AddCustomerModules();
-      builder.Services.AddInfrastructureModules(builder.Configuration);
+      builder.Services.AddInfrastructure(builder.Configuration);
       
       var app = builder.Build();
 

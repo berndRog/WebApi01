@@ -2,7 +2,7 @@ using WebApi._2_Core.Customers._1_Ports.Inbound;
 using WebApi._2_Core.Customers._2_Application.UseCases;
 namespace WebApi._2_Core.Customers;
 
-public static class DiCustomerModules {
+public static class DiCustomer {
    
    public static IServiceCollection AddCustomerModules(
       this IServiceCollection services

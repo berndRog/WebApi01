@@ -16,102 +16,104 @@ public sealed class ConfigCustomer(
       builder.ToTable("Customers");
 
       // Primary Key will never be generated
-      builder.HasKey(o => o.Id);
-      builder.Property(o => o.Id).ValueGeneratedNever();
+      builder.HasKey(c => c.Id);
+      builder.Property(c => c.Id).ValueGeneratedNever();
       
       // Auditing timestamps
-      builder.Property(o => o.CreatedAt)
+      builder.Property(c => c.CreatedAt)
          .HasConversion(dtConv)
          .IsRequired();
 
-      builder.Property(o => o.UpdatedAt)
+      builder.Property(c => c.UpdatedAt)
          .HasConversion(dtConv)
          .IsRequired();
       
       // Profile data
-      builder.Property(o => o.Firstname)
+      builder.Property(c => c.Firstname)
          .HasMaxLength(80)
          .IsRequired();
-      builder.Property(o => o.Lastname)
+      builder.Property(c => c.Lastname)
          .HasMaxLength(80)
          .IsRequired();
-      builder.Property(o => o.CompanyName)
+      builder.Property(c => c.CompanyName)
          .HasMaxLength(80)
          .IsRequired(false);
 
       // Value Object EmailVo mit Conversion
       builder.Property(c => c.EmailVo)
-         .HasConversion(vo => vo.Value, s => EmailVo.FromPersisted(s))
+         .HasConversion(
+            vo => vo.Value, 
+            s => EmailVo.FromPersisted(s))
          .IsRequired()
          .HasColumnName("Email") 
          .HasMaxLength(254);
       builder.HasIndex(c => c.EmailVo).IsUnique();
 
-      builder.Property(o => o.Subject)
+      builder.Property(c => c.Subject)
          .HasMaxLength(200)
          .IsRequired();
-      builder.HasIndex(o => o.Subject).IsUnique();
+      builder.HasIndex(c => c.Subject)
+         .IsUnique();
 
       // Status
-      builder.Property(o => o.Status)
+      builder.Property(c => c.Status)
          .HasConversion<int>()   
          .IsRequired();
 
       // Employee decisions / audit facts
-      builder.Property(o => o.ActivatedAt)
+      builder.Property(c => c.ActivatedAt)
          .HasConversion(dtConvNul)
          .IsRequired(false);
 
-      builder.Property(o => o.RejectedAt)
+      builder.Property(c => c.RejectedAt)
          .HasConversion(dtConvNul)
          .IsRequired(false);
 
-      builder.Property(o => o.RejectCode)
+      builder.Property(c => c.RejectCode)
          .HasConversion<int>()   
          .IsRequired();
 
-      builder.Property(o => o.AuditedByEmployeeId)
+      builder.Property(c => c.AuditedByEmployeeId)
          .IsRequired(false);
 
-      builder.Property(o => o.DeactivatedAt)
+      builder.Property(c => c.DeactivatedAt)
          .HasConversion(dtConvNul)
          .IsRequired(false);
 
-      builder.Property(o => o.DeactivatedByEmployeeId)
+      builder.Property(c => c.DeactivatedByEmployeeId)
          .IsRequired(false);
 
       // Domain-only
       builder.Ignore(o => o.DisplayName);
-      builder.Ignore(o => o.IsActive);
-      builder.Ignore(o => o.IsProfileComplete);
+      builder.Ignore(c => c.IsActive);
+      builder.Ignore(c => c.IsProfileComplete);
       
 
       // Address (owned value object)
-      builder.OwnsOne(o => o.AddressVo, a => {
+      builder.OwnsOne(c => c.AddressVo, a => {
          
-         a.Property(p => p.Street)
+         a.Property(a => a.Street)
             .HasMaxLength(80)
             .HasColumnName("Street")
             .IsRequired();
 
-         a.Property(p => p.PostalCode)
+         a.Property(a => a.PostalCode)
             .HasMaxLength(20)
             .HasColumnName("PostalCode")
             .IsRequired();
 
-         a.Property(p => p.City)
+         a.Property(a => a.City)
             .HasMaxLength(80)
             .HasColumnName("City")
             .IsRequired();
 
-         a.Property(p => p.Country)
+         a.Property(a => a.Country)
             .HasMaxLength(80)
             .HasColumnName("Country")
             .IsRequired(false);
       });
-      builder.Navigation(o => o.AddressVo).IsRequired();
-
-      // Optional indexes for admin filtering
-      builder.HasIndex(o => o.CreatedAt);
+      builder.Navigation(c => c.AddressVo)
+         .IsRequired();
+      
    }
 }

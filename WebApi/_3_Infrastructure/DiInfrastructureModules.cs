@@ -11,7 +11,7 @@ namespace WebApi._3_Infrastructure;
 
 public static class DiInfrastructureModules {
    
-   public static IServiceCollection AddInfrastructureModules(
+   public static IServiceCollection AddInfrastructure(
       this IServiceCollection services,
       IConfiguration configuration
    ) {
